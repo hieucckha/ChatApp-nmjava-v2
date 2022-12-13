@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<AnchorPane prefHeight="400.0" prefWidth="800.0" stylesheets="@css/AdminHome.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.nmjava.chatapp.client.controllers.AdminHomeController">
+    <children>
+        <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <HBox alignment="CENTER_LEFT" prefHeight="45.0" prefWidth="800.0">
+                    <children>
+                        <Label maxWidth="1.7976931348623157E308" prefHeight="46.0" text="Admin" HBox.hgrow="ALWAYS">
+                            <font>
+                                <Font size="28.0" />
+                            </font>
+                            <graphic>
+                                <FontIcon iconLiteral="ti-user" text="" />
+                            </graphic>
+                            <padding>
+                                <Insets left="12.0" />
+                            </padding>
+                        </Label>
+                        <Button fx:id="filterBtn" alignment="CENTER" mnemonicParsing="false" onAction="#filterButtonOnAction" prefHeight="46.0" prefWidth="42.0">
+                            <graphic>
+                                <FontIcon iconLiteral="ti-filter" iconSize="23" text="" />
+                            </graphic>
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </Button>
+                        <Button fx:id="addBtn" alignment="CENTER" layoutX="768.0" layoutY="10.0" mnemonicParsing="false" onAction="#addButtonOnAction" prefHeight="46.0" prefWidth="42.0">
+                            <graphic>
+                                <FontIcon iconLiteral="ti-plus" iconSize="23" />
+                            </graphic>
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </Button>
+                    </children>
+                </HBox>
+                <GridPane VBox.vgrow="ALWAYS">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="56.000024414062494" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="543.5999755859375" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                    <children>
+                        <StackPane fx:id="stackPanel" GridPane.columnIndex="1">
+                            <children>
+                                <TableView fx:id="tableView" editable="true" prefHeight="200.0" prefWidth="200.0">
+                                    <columns>
+                                        <TableColumn fx:id="userNameTable" prefWidth="75.0" sortable="false" text="User Name" />
+                                        <TableColumn fx:id="nameTable" prefWidth="78.0" text="Họ tên" />
+                                        <TableColumn fx:id="addressTable" prefWidth="87.0" sortable="false" text="Địa chỉ" />
+                                        <TableColumn fx:id="dobTable" prefWidth="81.0" text="Ngày sinh" />
+                                        <TableColumn fx:id="sexTable" prefWidth="87.0" sortable="false" text="Giới tính" />
+                                        <TableColumn fx:id="emailTable" prefWidth="62.0" sortable="false" text="Email" />
+                                    </columns>
+                                </TableView>
+                                <BorderPane fx:id="borderPanelSub" prefHeight="200.0" prefWidth="200.0">
+                                    <right>
+                                        <VBox fx:id="addUser" prefHeight="354.0" prefWidth="269.0" style="-fx-background-color: #ddd5d5;" styleClass="sceneAdd" BorderPane.alignment="CENTER">
+                                            <children>
+                                                <Label alignment="CENTER" prefHeight="55.0" prefWidth="270.0" text="Add user" textAlignment="CENTER">
+                                                    <graphic>
+                                                        <FontIcon iconLiteral="ti-layout-cta-right" iconSize="22" text="" />
+                                                    </graphic>
+                                                    <font>
+                                                        <Font size="19.0" />
+                                                    </font>
+                                                </Label>
+                                                <TextField fx:id="userNameTextField" promptText="User Name">
+                                                    <VBox.margin>
+                                                        <Insets bottom="10.0" />
+                                                    </VBox.margin>
+                                                </TextField>
+                                                <TextField fx:id="nameTextField" layoutX="10.0" layoutY="65.0" promptText="họ Tên">
+                                                    <VBox.margin>
+                                                        <Insets bottom="8.0" />
+                                                    </VBox.margin>
+                                                </TextField>
+                                                <TextField fx:id="addressTextField" layoutX="10.0" layoutY="101.0" promptText="Địa chỉ">
+                                                    <VBox.margin>
+                                                        <Insets bottom="8.0" />
+                                                    </VBox.margin>
+                                                </TextField>
+                                                <TextField fx:id="dobTextField" layoutX="10.0" layoutY="127.0" promptText="Ngày sinh (yyyy-mm-dd)">
+                                                    <VBox.margin>
+                                                        <Insets bottom="8.0" />
+                                                    </VBox.margin>
+                                                </TextField>
+                                                <TextField fx:id="sexTextField" layoutX="10.0" layoutY="152.0" promptText="Giới tính">
+                                                    <VBox.margin>
+                                                        <Insets bottom="8.0" />
+                                                    </VBox.margin>
+                                                </TextField>
+                                                <TextField fx:id="emailTextField" layoutX="10.0" layoutY="178.0" promptText="Email">
+                                                    <VBox.margin>
+                                                        <Insets bottom="8.0" />
+                                                    </VBox.margin>
+                                                </TextField>
+                                                <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                                                    <children>
+                                                        <Button fx:id="cancelAddBtn" mnemonicParsing="false" onAction="#cancelAddButtonOnAction" prefHeight="52.0" prefWidth="115.0" text="Cancel" />
+                                                        <Button fx:id="addData" mnemonicParsing="false" onAction="#AddDataOnAction" prefHeight="52.0" prefWidth="115.0" text="ADD" />
+                                                    </children>
+                                                </HBox>
+                                            </children>
+                                        </VBox>
+                                    </right>
+                                </BorderPane>
+                                <BorderPane fx:id="borderPanelSub1" prefHeight="200.0" prefWidth="200.0">
+                                    <right>
+                                        <VBox fx:id="filterUser" prefHeight="355.0" prefWidth="269.0" style="-fx-background-color: #ddd5d5;" visible="false" BorderPane.alignment="CENTER">
+                                            <children>
+                                                <Label alignment="CENTER" prefHeight="55.0" prefWidth="218.0" text="Filter">
+                                                    <font>
+                                                        <Font size="19.0" />
+                                                    </font>
+                                                </Label>
+                                                <TextField fx:id="filterUserName" prefHeight="33.0" prefWidth="270.0" promptText="UserName">
+                                                    <VBox.margin>
+                                                        <Insets bottom="30.0" />
+                                                    </VBox.margin>
+                                                </TextField>
+                                                <HBox prefHeight="100.0" prefWidth="185.0">
+                                                    <children>
+                                                        <Button fx:id="cancelFilterBtn" mnemonicParsing="false" onAction="#cancelFilterButtonOnAction" prefHeight="36.0" prefWidth="291.0" text="Cancel" />
+                                                        <Button mnemonicParsing="false" prefHeight="36.0" prefWidth="291.0" text="Find" />
+                                                    </children>
+                                                </HBox>
+                                            </children>
+                                        </VBox>
+                                    </right>
+                                </BorderPane>
+                            </children>
+                        </StackPane>
+                        <VBox prefHeight="200.0" prefWidth="100.0">
+                            <children>
+                                <VBox maxHeight="-Infinity" prefHeight="354.0" prefWidth="99.0" VBox.vgrow="ALWAYS">
+                                    <children>
+                                        <Button fx:id="listUserBtn" mnemonicParsing="false" onAction="#handleBtn" prefHeight="42.0" prefWidth="72.0" styleClass="btnUser">
+                                            <font>
+                                                <Font size="15.0" />
+                                            </font>
+                                            <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                            </cursor>
+                                            <graphic>
+                                                <FontIcon iconLiteral="ti-agenda" iconSize="20" styleClass="btnuser" text="" />
+                                            </graphic>
+                                            <tooltip>
+                                                <Tooltip text="List user" />
+                                            </tooltip>
+                                        </Button>
+                                        <Button fx:id="listGroupBtn" mnemonicParsing="false" onAction="#handleBtn" prefHeight="42.0" prefWidth="72.0">
+                                            <font>
+                                                <Font size="15.0" />
+                                            </font>
+                                            <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                            </cursor>
+                                            <graphic>
+                                                <FontIcon iconLiteral="mdal-group" iconSize="20" text="" wrappingWidth="13.60003662109375" />
+                                            </graphic>
+                                            <tooltip>
+                                                <Tooltip text="List group" />
+                                            </tooltip>
+                                        </Button>
+                                        <Button fx:id="listLoginBtn" mnemonicParsing="false" onAction="#handleBtn" prefHeight="42.0" prefWidth="72.0">
+                                            <font>
+                                                <Font size="15.0" />
+                                            </font>
+                                            <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                            </cursor>
+                                            <graphic>
+                                                <FontIcon iconLiteral="mdal-library_books" iconSize="20" />
+                                            </graphic>
+                                            <tooltip>
+                                                <Tooltip text="List Login" />
+                                            </tooltip>
+                                        </Button>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </VBox>
+                    </children>
+                </GridPane>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>

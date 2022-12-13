@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<GridPane gridLinesVisible="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="780.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.nmjava.chatapp.client.controllers.UserFriendOnlineController">
+    <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="400.0" minWidth="400.0" prefWidth="400.0" />
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="471.0" />
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints maxHeight="75.0" minHeight="38.0" prefHeight="50.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="350.0" vgrow="SOMETIMES" />
+    </rowConstraints>
+    <children>
+        <GridPane fx:id="utilsContainer">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="100.0" prefWidth="193.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="87.0" minWidth="60.0" prefWidth="77.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="77.0" minWidth="60.0" prefWidth="70.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            </rowConstraints>
+            <children>
+                <TextField prefHeight="35.0" prefWidth="240.0" style="-fx-background-color: grey; -fx-background-radius: 20;">
+                    <GridPane.margin>
+                        <Insets left="5.0" right="5.0" />
+                    </GridPane.margin>
+                </TextField>
+                <Button minWidth="41.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="81.0" style="-fx-background-color: transparent;" text="Thêm bạn" textFill="#2c2b2b" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets left="2.0" right="2.0" />
+                    </GridPane.margin>
+                </Button>
+                <Button minWidth="41.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="76.0" style="-fx-background-color: transparent;" text="Tao nhóm" textFill="#2c2b2b" GridPane.columnIndex="2" />
+            </children>
+        </GridPane>
+        <HBox fx:id="titleChatContainer" alignment="CENTER_LEFT" minWidth="300.0" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" />
+        <GridPane fx:id="listInfoContainer" gridLinesVisible="true" GridPane.rowIndex="1">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="300.0" minWidth="300.0" prefWidth="300.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            </rowConstraints>
+            <children>
+                <VBox prefHeight="200.0" prefWidth="100.0">
+                    <children>
+                        <Label prefHeight="92.0" prefWidth="99.0" text="Danh sách contact" />
+                        <Label prefHeight="92.0" prefWidth="99.0" style="-fx-background-color: #d4f1d6;" text="Danh sách bạn bè" />
+                        <Label prefHeight="92.0" prefWidth="99.0" text="Bạn bè online" />
+                    </children>
+                </VBox>
+                <ScrollPane fx:id="chatListSP" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+                    <content>
+                        <VBox fx:id="chatList" style="-fx-background-color: white;" />
+                    </content>
+                </ScrollPane>
+            </children>
+        </GridPane>
+        <GridPane fx:id="chatContainer" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <columnConstraints>
+                <ColumnConstraints hgrow="ALWAYS" minWidth="100.0" prefWidth="100.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="632.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="30.0" minHeight="73.0" prefHeight="73.0" vgrow="SOMETIMES" />
+            </rowConstraints>
+            <children>
+                <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" vbarPolicy="ALWAYS">
+                    <content>
+                        <VBox alignment="BASELINE_RIGHT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="616.0" prefWidth="863.0">
+                            <children>
+                                <HBox fx:id="chatter111" alignment="CENTER_RIGHT" style="-fx-border-radius: 10; -fx-background-radius: 10;">
+                                    <children>
+                                        <ImageView fitHeight="51.0" fitWidth="95.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../assects/images/3cham.png" />
+                                            </image>
+                                        </ImageView>
+                                        <HBox alignment="CENTER" prefHeight="51.0" prefWidth="174.0" style="-fx-background-color: #d4f1d6; -fx-background-radius: 20;">
+                                            <children>
+                                                <Label prefHeight="28.0" prefWidth="138.0" text="Alo đi ăn uống gì ko">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                    </padding>
+                                </HBox>
+                                <HBox fx:id="chatter11111" alignment="CENTER_LEFT" style="-fx-border-radius: 10; -fx-background-radius: 10;">
+                                    <children>
+                                        <ImageView fitHeight="60.0" fitWidth="82.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../assects/images/avatar2.png" />
+                                            </image>
+                                        </ImageView>
+                                        <HBox alignment="CENTER" prefHeight="60.0" prefWidth="169.0" style="-fx-background-color: white; -fx-background-radius: 20;">
+                                            <children>
+                                                <Label prefHeight="51.0" prefWidth="157.0" text="Đang giảm cân bạn ơi">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                    </padding>
+                                </HBox>
+                                <HBox fx:id="chatter1111" alignment="CENTER_LEFT" style="-fx-border-radius: 10; -fx-background-radius: 10;">
+                                    <children>
+                                        <ImageView fitHeight="60.0" fitWidth="82.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../assects/images/avatar2.png" />
+                                            </image>
+                                        </ImageView>
+                                        <HBox alignment="CENTER" prefHeight="67.0" prefWidth="151.0" style="-fx-background-color: white; -fx-background-radius: 20;">
+                                            <children>
+                                                <Label prefHeight="52.0" prefWidth="145.0" text="Bạn bao thì mình đi">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                    </padding>
+                                </HBox>
+                                <HBox fx:id="chatter1112" alignment="CENTER_RIGHT" style="-fx-border-radius: 10; -fx-background-radius: 10;">
+                                    <children>
+                                        <ImageView fitHeight="51.0" fitWidth="95.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../assects/images/3cham.png" />
+                                            </image>
+                                        </ImageView>
+                                        <HBox alignment="CENTER" prefHeight="51.0" prefWidth="56.0" style="-fx-background-color: #d4f1d6; -fx-background-radius: 20;">
+                                            <children>
+                                                <Label prefHeight="30.0" prefWidth="29.0" text="Ok">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                    </padding>
+                                </HBox>
+                                <HBox fx:id="chatter111111" alignment="CENTER" style="-fx-border-radius: 10; -fx-background-radius: 10;">
+                                    <children>
+                                        <Label prefHeight="51.0" prefWidth="89.0" text="T2: 10:00 pm">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                    </padding>
+                                </HBox>
+                                <HBox fx:id="chatter1113" alignment="CENTER_RIGHT" style="-fx-border-radius: 10; -fx-background-radius: 10;">
+                                    <children>
+                                        <ImageView fitHeight="51.0" fitWidth="95.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../assects/images/3cham.png" />
+                                            </image>
+                                        </ImageView>
+                                        <HBox alignment="CENTER" prefHeight="47.0" prefWidth="151.0" style="-fx-background-color: #d4f1d6; -fx-background-radius: 20;">
+                                            <children>
+                                                <Label prefHeight="29.0" prefWidth="246.0" text="Làm bài bên Java chưa">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                    </padding>
+                                </HBox>
+                                <HBox fx:id="chatter11132" alignment="CENTER_RIGHT" style="-fx-border-radius: 10; -fx-background-radius: 10;">
+                                    <children>
+                                        <ImageView fitHeight="51.0" fitWidth="95.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../assects/images/3cham.png" />
+                                            </image>
+                                        </ImageView>
+                                        <HBox alignment="CENTER" prefHeight="53.0" prefWidth="152.0" style="-fx-background-color: #d4f1d6; -fx-background-radius: 20;">
+                                            <children>
+                                                <Label prefHeight="24.0" prefWidth="132.0" text="Help với đang bế tắt">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                    </padding>
+                                </HBox>
+                                <HBox fx:id="chatter111113" alignment="CENTER_LEFT" style="-fx-border-radius: 10; -fx-background-radius: 10;">
+                                    <children>
+                                        <ImageView fitHeight="60.0" fitWidth="82.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../assects/images/avatar2.png" />
+                                            </image>
+                                        </ImageView>
+                                        <HBox alignment="CENTER" prefHeight="53.0" prefWidth="74.0" style="-fx-background-color: white; -fx-background-radius: 20;">
+                                            <children>
+                                                <Label prefHeight="51.0" prefWidth="134.0" text="Ok đợi síu">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                    </padding>
+                                </HBox>
+                                <HBox fx:id="chatter11112" alignment="CENTER_LEFT" style="-fx-border-radius: 10; -fx-background-radius: 10;">
+                                    <children>
+                                        <ImageView fitHeight="60.0" fitWidth="82.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../assects/images/avatar2.png" />
+                                            </image>
+                                        </ImageView>
+                                        <HBox alignment="CENTER" prefHeight="68.0" prefWidth="132.0" style="-fx-background-color: white; -fx-background-radius: 20;">
+                                            <children>
+                                                <Label prefHeight="28.0" prefWidth="123.0" text="Vô discord đê">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                    </padding>
+                                </HBox>
+                                <HBox fx:id="chatter11131" alignment="CENTER_RIGHT" style="-fx-border-radius: 10; -fx-background-radius: 10;">
+                                    <children>
+                                        <ImageView fitHeight="51.0" fitWidth="95.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../assects/images/3cham.png" />
+                                            </image>
+                                        </ImageView>
+                                        <HBox alignment="CENTER" prefHeight="40.0" prefWidth="103.0" style="-fx-background-color: #d4f1d6; -fx-background-radius: 20;">
+                                            <children>
+                                                <Label prefHeight="23.0" prefWidth="56.0" text="Oke">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                    </padding>
+                                </HBox>
+                            </children>
+                        </VBox>
+                    </content>
+                </ScrollPane>
+                <GridPane GridPane.rowIndex="1">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="650.0" prefWidth="650.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="89.0" prefWidth="89.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                    <children>
+                        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="85.0" GridPane.columnIndex="1">
+                            <graphic>
+                                <FontIcon iconLiteral="mdi2a-account-edit" />
+                            </graphic>
+                        </Button>
+                        <TextField />
+                    </children>
+                </GridPane>
+            </children>
+        </GridPane>
+    </children>
+</GridPane>

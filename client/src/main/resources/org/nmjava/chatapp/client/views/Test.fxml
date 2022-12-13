@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<VBox fx:id="root" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.nmjava.chatapp.client.controllers.TestController">
+    <children>
+        <Button fx:id="btn" mnemonicParsing="false" text="Button">
+            <graphic>
+                <FontIcon iconLiteral="mdal-360" iconSize="30" />
+            </graphic>
+        </Button>
+        <Label fx:id="lb" text="Label" />
+    </children>
+</VBox>

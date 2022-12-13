@@ -1,0 +1,23 @@
+#fdEmail {
+    -fx-background-radius: 10;
+    -fx-border-color: #000000;
+    -fx-border-radius: 10;
+    -fx-border-width: 2;
+    -fx-min-width: 200;
+    -fx-min-height: 50;
+    -fx-max-width: 250;
+    -fx-max-height: 50;
+}
+
+#btnResetPw {
+    -fx-background-color: #000000;
+    -fx-background-radius: 10;
+    -fx-min-width: 200;
+    -fx-min-height: 50;
+    -fx-max-width: 250;
+    -fx-max-height: 50;
+}
+
+#btnCancel {
+    -fx-background-color: transparent;
+}

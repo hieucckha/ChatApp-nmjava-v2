@@ -1,0 +1,20 @@
+#fdEmail, #fdPassword, #fdComfierPw {
+    -fx-background-radius: 10;
+    -fx-border-color: #000000;
+    -fx-border-radius: 10;
+    -fx-border-width: 2;
+}
+
+#btnSignup {
+    -fx-background-color: #000000;
+    -fx-background-radius: 10;
+    -fx-min-width: 200;
+    -fx-min-height: 50;
+    -fx-max-width: 250;
+    -fx-max-height: 50;
+}
+
+#btnLogin {
+    -fx-background-color: transparent;
+    -fx-alignment: center-left;
+}

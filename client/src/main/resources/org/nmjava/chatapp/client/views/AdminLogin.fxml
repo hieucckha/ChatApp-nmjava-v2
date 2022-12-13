@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<AnchorPane prefHeight="400.0" prefWidth="800.0" stylesheets="@css/AdminHome.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.nmjava.chatapp.client.controllers.AdminLoginController">
+    <children>
+        <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <HBox alignment="CENTER_LEFT" prefHeight="45.0" prefWidth="800.0">
+                    <children>
+                        <Label maxWidth="1.7976931348623157E308" prefHeight="46.0" text="Admin" HBox.hgrow="ALWAYS">
+                            <font>
+                                <Font size="28.0" />
+                            </font>
+                            <graphic>
+                                <FontIcon iconLiteral="ti-user" text="" />
+                            </graphic>
+                            <padding>
+                                <Insets left="12.0" />
+                            </padding>
+                        </Label>
+                    </children>
+                </HBox>
+                <GridPane VBox.vgrow="ALWAYS">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="56.000024414062494" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="543.5999755859375" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                    <children>
+                        <VBox prefHeight="200.0" prefWidth="100.0">
+                            <children>
+                                <VBox maxHeight="-Infinity" prefHeight="354.0" prefWidth="99.0" VBox.vgrow="ALWAYS">
+                                    <children>
+                                        <Button fx:id="listUserBtn" mnemonicParsing="false" onAction="#handleBtn" prefHeight="42.0" prefWidth="72.0">
+                                            <font>
+                                                <Font size="15.0" />
+                                            </font>
+                                            <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                            </cursor>
+                                            <graphic>
+                                                <FontIcon iconLiteral="ti-agenda" iconSize="20" styleClass="btnuser" />
+                                            </graphic>
+                                            <tooltip>
+                                                <Tooltip text="List user" />
+                                            </tooltip>
+                                        </Button>
+                                        <Button fx:id="listGroupBtn" mnemonicParsing="false" onAction="#handleBtn" prefHeight="42.0" prefWidth="72.0">
+                                            <font>
+                                                <Font size="15.0" />
+                                            </font>
+                                            <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                            </cursor>
+                                            <graphic>
+                                                <FontIcon iconLiteral="mdal-group" iconSize="20" wrappingWidth="13.60003662109375" />
+                                            </graphic>
+                                            <tooltip>
+                                                <Tooltip text="List group" />
+                                            </tooltip>
+                                        </Button>
+                                        <Button fx:id="listLoginBtn" mnemonicParsing="false" onAction="#handleBtn" prefHeight="42.0" prefWidth="72.0" styleClass="btnUser">
+                                            <font>
+                                                <Font size="15.0" />
+                                            </font>
+                                            <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                            </cursor>
+                                            <graphic>
+                                                <FontIcon iconLiteral="mdal-library_books" iconSize="20" />
+                                            </graphic>
+                                            <tooltip>
+                                                <Tooltip text="List Login" />
+                                            </tooltip>
+                                        </Button>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </VBox>
+                  <BorderPane prefHeight="355.0" prefWidth="801.0" GridPane.columnIndex="1">
+                     <right>
+                        <VBox prefHeight="354.0" prefWidth="236.0" style="-fx-background-color: #ddd5d5;" BorderPane.alignment="CENTER">
+                           <children>
+                              <Label alignment="CENTER" prefHeight="10.0" prefWidth="190.0" text="List login">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                              <TextArea fx:id="textAreaLoginTimes" disable="true" prefHeight="330.0" prefWidth="198.0" VBox.vgrow="ALWAYS" />
+                           </children>
+                        </VBox>
+                     </right>
+                     <center>
+                        <TableView fx:id="tableView" onMouseClicked="#onClickCollumn" prefHeight="354.0" prefWidth="502.0" BorderPane.alignment="CENTER">
+                          <columns>
+                            <TableColumn fx:id="tableLoginUserName" editable="false" prefWidth="75.0" sortable="false" text="User name" />
+                            <TableColumn fx:id="tableLoginName" editable="false" prefWidth="75.0" sortable="false" text="Name" />
+                          </columns>
+                        </TableView>
+                     </center>
+                  </BorderPane>
+                    </children>
+                </GridPane>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>

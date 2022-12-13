@@ -1,0 +1,19 @@
+
+
+/*.root {*/
+/*    -fx-background-color: red;*/
+/*}*/
+Button {
+    -fx-background-color: transparent;
+}
+.btnUser:hover,
+Button:hover{
+    -fx-background-color:  #75a3a3  ;
+    /*-fx-background-color:  #f0f5f5;*/
+}
+.btnUser{
+    -fx-background-color:  #b3cccc ;
+}
+GridPane{
+    -fx-border-radius: 2;
+}
