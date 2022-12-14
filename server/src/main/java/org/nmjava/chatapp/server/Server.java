@@ -3,7 +3,6 @@ package org.nmjava.chatapp.server;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.ObjectUtils;
-import org.nmjava.chatapp.commons.enums.Action;
 import org.nmjava.chatapp.commons.enums.StatusCode;
 import org.nmjava.chatapp.commons.requests.Request;
 import org.nmjava.chatapp.commons.responses.Response;
@@ -14,7 +13,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class Server {
