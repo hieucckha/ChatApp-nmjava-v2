@@ -10,6 +10,8 @@ module org.nmjava.chatapp.client {
     requires org.kordamp.ikonli.core;
     requires org.kordamp.ikonli.javafx;
 
+    requires org.nmjava.chatapp.commons;
+
     exports org.nmjava.chatapp.client;
     opens org.nmjava.chatapp.client to javafx.fxml;
 

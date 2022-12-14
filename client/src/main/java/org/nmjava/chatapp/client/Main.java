@@ -1,8 +1,8 @@
 package org.nmjava.chatapp.client;
 
-import org.nmjava.chatapp.client.utils.SceneController;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import org.nmjava.chatapp.client.utils.SceneController;
 
 public class Main extends Application {
     private void registerScene() {
