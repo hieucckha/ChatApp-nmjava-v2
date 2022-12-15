@@ -1,11 +1,11 @@
-package org.nmjava.chatapp.client.daos;
+package org.nmjava.chatapp.commons.daos;
 
-import org.nmjava.chatapp.client.models.User;
-import org.nmjava.chatapp.client.utils.ConnectDB;
 import org.mindrot.jbcrypt.BCrypt;
+import org.nmjava.chatapp.commons.models.User;
+import org.nmjava.chatapp.commons.utils.ConnectDB;
 
-import java.sql.*;
 import java.sql.Date;
+import java.sql.*;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -103,7 +103,7 @@ public class UserDao {
                 statement.setDate(3, Date.valueOf(user.getDateOfBirth()));
                 statement.setString(4, user.getGender());
                 statement.setString(5, user.getEmail());
-                statement.setString(6,user.getUsername());
+                statement.setString(6, user.getUsername());
 
                 int numberOfDeletedRows = statement.executeUpdate();
             } catch (SQLException sqlEx) {

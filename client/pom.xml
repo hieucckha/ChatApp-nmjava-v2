@@ -22,6 +22,7 @@
     </properties>
 
     <profiles>
+
         <profile>
             <id>dev</id>
             <activation>
@@ -54,6 +55,7 @@
                 <db.password>123456</db.password>
             </properties>
         </profile>
+
     </profiles>
 
     <dependencies>
@@ -131,6 +133,7 @@
     </dependencies>
 
     <build>
+
         <!-- map ${} variable -->
         <resources>
             <resource>
@@ -140,6 +143,7 @@
         </resources>
 
         <plugins>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -149,6 +153,7 @@
                     <target>${maven.compiler.target}</target>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
@@ -169,6 +174,7 @@
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
     </build>
 </project>

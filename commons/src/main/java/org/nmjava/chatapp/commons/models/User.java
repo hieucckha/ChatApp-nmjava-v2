@@ -1,4 +1,4 @@
-package org.nmjava.chatapp.client.models;
+package org.nmjava.chatapp.commons.models;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
