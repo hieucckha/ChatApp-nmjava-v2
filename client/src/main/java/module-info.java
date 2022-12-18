@@ -1,6 +1,7 @@
 module org.nmjava.chatapp.client {
     requires javafx.controls;
     requires javafx.fxml;
+    requires  java.base;
 
     requires java.sql;
     requires org.postgresql.jdbc;
@@ -11,6 +12,7 @@ module org.nmjava.chatapp.client {
     requires org.kordamp.ikonli.javafx;
 
     requires org.nmjava.chatapp.commons;
+    requires org.apache.commons.lang3;
 
     exports org.nmjava.chatapp.client;
     opens org.nmjava.chatapp.client to javafx.fxml;

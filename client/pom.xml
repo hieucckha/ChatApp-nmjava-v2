@@ -129,6 +129,11 @@
             <artifactId>ikonli-themify-pack</artifactId>
             <version>${ikonli.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-base</artifactId>
+            <version>19</version>
+        </dependency>
 
     </dependencies>
 
