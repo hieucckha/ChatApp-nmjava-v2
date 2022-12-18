@@ -180,7 +180,6 @@ public class AdminHomeController implements Initializable {
 
         tableView.getItems().clear();
         tableView.setItems(FXCollections.observableArrayList(new UserDao().getInfoAll()));
-
     }
 
 

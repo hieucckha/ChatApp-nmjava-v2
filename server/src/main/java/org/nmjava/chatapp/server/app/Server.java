@@ -1,4 +1,4 @@
-package org.nmjava.chatapp.server;
+package org.nmjava.chatapp.server.app;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -6,9 +6,6 @@ import java.net.ServerSocket;
 public class Server {
 
     private ServerSocket serverSocket;
-
-    public Server() {
-    }
 
     public void start(int port) {
         System.out.println("Server starting!!!");

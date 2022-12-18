@@ -5,4 +5,5 @@ module org.nmjava.chatapp.server {
     requires org.nmjava.chatapp.commons;
 
     exports org.nmjava.chatapp.server;
+    exports org.nmjava.chatapp.server.app;
 }

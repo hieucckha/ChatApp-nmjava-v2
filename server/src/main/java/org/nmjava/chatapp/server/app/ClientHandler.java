@@ -1,8 +1,9 @@
-package org.nmjava.chatapp.server;
+package org.nmjava.chatapp.server.app;
 
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.ObjectUtils;
+import org.nmjava.chatapp.commons.enums.Action;
 import org.nmjava.chatapp.commons.requests.Request;
 import org.nmjava.chatapp.commons.responses.Response;
 
@@ -11,16 +12,28 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 @Getter
 @Setter
 public class ClientHandler implements Runnable {
+    private static Map<Action, Consumer<Request>> handlers = registerHandler();
 
     private Socket clientSocket;
     private ObjectInputStream inputStream;
     private ObjectOutputStream outputStream;
     private String uid;
+
+    public static HashMap<Action, Consumer<Request>> registerHandler() {
+        HashMap<Action, Consumer<Request>> commands = new HashMap<>();
+
+        commands.put(Action.DISCONNECT, RequestHandler::DISCONNECT_);
+
+        return commands;
+    }
 
     public ClientHandler(Socket socket) throws IOException {
         this.clientSocket = socket;
@@ -43,15 +56,8 @@ public class ClientHandler implements Runnable {
                 Object input = this.inputStream.readObject();
                 if (ObjectUtils.isNotEmpty(input)) {
                     Request request = (Request) input;
-                    switch (request.getAction()) {
-                        case DISCONNECT: {
-                            // This only remove the thread out of hashmap
-                            // NOT CLOSE THE SOCKET !!!
-                            break;
-                        }
-                        default:
-                            break;
-                    }
+
+                    handlers.get(request.getAction()).accept(request);
                 }
             }
         } catch (EOFException e) {

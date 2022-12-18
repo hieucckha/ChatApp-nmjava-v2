@@ -1,5 +1,3 @@
-package org.nmjava.chatapp.server;
-
 import org.apache.commons.lang3.ObjectUtils;
 import org.nmjava.chatapp.commons.enums.Action;
 import org.nmjava.chatapp.commons.requests.InformationRequest;
