@@ -52,6 +52,11 @@
                                 <Cursor fx:constant="HAND" />
                             </cursor>
                         </Button>
+                  <Button fx:id="blockBtn" mnemonicParsing="false">
+                     <graphic>
+                        <FontIcon iconLiteral="ti-lock" iconSize="23" text="" />
+                     </graphic>
+                  </Button>
                     </children>
                 </HBox>
                 <GridPane VBox.vgrow="ALWAYS">
@@ -65,7 +70,7 @@
                     <children>
                         <StackPane fx:id="stackPanel" GridPane.columnIndex="1">
                             <children>
-                                <TableView fx:id="tableView" editable="true" prefHeight="200.0" prefWidth="200.0">
+                                <TableView fx:id="tableView" editable="true" onMouseClicked="#clickItem" prefHeight="200.0" prefWidth="200.0">
                                     <columns>
                                         <TableColumn fx:id="userNameTable" prefWidth="75.0" sortable="false" text="User Name" />
                                         <TableColumn fx:id="nameTable" prefWidth="78.0" text="Họ tên" />
@@ -73,6 +78,7 @@
                                         <TableColumn fx:id="dobTable" prefWidth="81.0" text="Ngày sinh" />
                                         <TableColumn fx:id="sexTable" prefWidth="87.0" sortable="false" text="Giới tính" />
                                         <TableColumn fx:id="emailTable" prefWidth="62.0" sortable="false" text="Email" />
+                              <TableColumn fx:id="activeColumn" editable="false" prefWidth="92.0" text="Active" />
                                     </columns>
                                 </TableView>
                                 <BorderPane fx:id="borderPanelSub" prefHeight="200.0" prefWidth="200.0">

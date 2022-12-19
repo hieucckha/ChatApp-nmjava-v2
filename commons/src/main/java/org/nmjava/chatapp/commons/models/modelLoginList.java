@@ -1,7 +1,4 @@
-package org.nmjava.chatapp.client.models;
-
-import java.util.Timer;
-import java.util.Vector;
+package org.nmjava.chatapp.commons.models;
 
 public class modelLoginList {
     String userName;
