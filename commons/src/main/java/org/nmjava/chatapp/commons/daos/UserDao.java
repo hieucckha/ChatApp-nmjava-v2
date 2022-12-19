@@ -26,7 +26,7 @@ public class UserDao {
 
     public Collection<User> getInfoAll() {
         Collection<User> users = new ArrayList<>();
-        String sql = "SELECT username, full_name, address, date_of_birth, gender, email FROM public.users";
+        String sql = "SELECT username, full_name, address, date_of_birth, gender, email, is_online, is_activated FROM public.users";
 
         connection.ifPresent(conn -> {
             try (Statement statement = conn.createStatement(); ResultSet resultSet = statement.executeQuery(sql)) {
@@ -37,8 +37,11 @@ public class UserDao {
                     LocalDate dateOfBirth = resultSet.getDate("date_of_birth").toLocalDate();
                     String gender = resultSet.getString("gender");
                     String email = resultSet.getString("email");
+                    Boolean online = resultSet.getBoolean("is_online");
+                    Boolean active = resultSet.getBoolean("is_activated");
+//                    System.out.println("11111"+ active);
 
-                    User user = new User(username, fullName, address, dateOfBirth, gender, email);
+                    User user = new User(username, fullName, address, dateOfBirth, gender, email, online, active);
                     user.setUsername(resultSet.getString("username"));
 
                     users.add(user);
@@ -54,8 +57,8 @@ public class UserDao {
     public Optional<String> save(User user) {
         User nonNullUser = Objects.requireNonNull(user, "The user is null");
 
-        String sql = "INSERT INTO public.users (user_id, username, password, full_name, address, date_of_birth, gender, email, is_activated, create_at)" +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)" +
+        String sql = "INSERT INTO public.users (user_id, username, password, full_name, address, date_of_birth, gender, email, is_online, is_activated, create_at)" +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)" +
                 "RETURNING user_id";
 
         return connection.flatMap(conn -> {
@@ -70,8 +73,9 @@ public class UserDao {
                 statement.setDate(6, Date.valueOf(nonNullUser.getDateOfBirth()));
                 statement.setString(7, nonNullUser.getGender());
                 statement.setString(8, nonNullUser.getEmail());
-                statement.setBoolean(9, nonNullUser.getActivated());
-                statement.setTimestamp(10, Timestamp.valueOf(nonNullUser.getCreateAt()));
+                statement.setBoolean(9, nonNullUser.getOnline());
+                statement.setBoolean(10, nonNullUser.getActivated());
+                statement.setTimestamp(11, Timestamp.valueOf(nonNullUser.getCreateAt()));
 
                 int numberOfInsertRows = statement.executeUpdate();
 
@@ -92,9 +96,7 @@ public class UserDao {
     }
 
     public void update(User user) {
-        String sql = "UPDATE public.users " +
-                "SET full_name = ?, address = ?, date_of_birth = ?, gender = ?, email = ? " +
-                "WHERE username = ?";
+        String sql = "UPDATE public.users SET full_name = ?, address = ?, date_of_birth = ?, gender = ?, email = ?, is_online = ?, is_activated = ? WHERE username = ?";
 
         connection.ifPresent(conn -> {
             try (PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -103,7 +105,9 @@ public class UserDao {
                 statement.setDate(3, Date.valueOf(user.getDateOfBirth()));
                 statement.setString(4, user.getGender());
                 statement.setString(5, user.getEmail());
-                statement.setString(6, user.getUsername());
+                statement.setBoolean(6, user.getOnline());
+                statement.setBoolean(7, user.getActivated());
+                statement.setString(8, user.getUsername());
 
                 int numberOfDeletedRows = statement.executeUpdate();
             } catch (SQLException sqlEx) {

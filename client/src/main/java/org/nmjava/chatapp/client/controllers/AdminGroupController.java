@@ -1,6 +1,6 @@
 package org.nmjava.chatapp.client.controllers;
 
-import org.nmjava.chatapp.client.models.modelGroupID;
+import org.nmjava.chatapp.commons.models.modelGroupID;
 import org.nmjava.chatapp.client.utils.SceneController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
