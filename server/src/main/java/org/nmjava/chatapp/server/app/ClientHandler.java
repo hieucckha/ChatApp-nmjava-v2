@@ -3,7 +3,7 @@ package org.nmjava.chatapp.server.app;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.ObjectUtils;
-import org.nmjava.chatapp.commons.enums.Action;
+import org.nmjava.chatapp.commons.enums.RequestType;
 import org.nmjava.chatapp.commons.requests.Request;
 import org.nmjava.chatapp.commons.responses.Response;
 
@@ -20,20 +20,13 @@ import java.util.function.Consumer;
 @Getter
 @Setter
 public class ClientHandler implements Runnable {
-    private static Map<Action, Consumer<Request>> handlers = registerHandler();
+    private static Map<RequestType, Consumer<Request>> handlers = registerHandler();
 
     private Socket clientSocket;
     private ObjectInputStream inputStream;
     private ObjectOutputStream outputStream;
     private String uid;
 
-    public static HashMap<Action, Consumer<Request>> registerHandler() {
-        HashMap<Action, Consumer<Request>> commands = new HashMap<>();
-
-        commands.put(Action.DISCONNECT, RequestHandler::DISCONNECT_);
-
-        return commands;
-    }
 
     public ClientHandler(Socket socket) throws IOException {
         this.clientSocket = socket;
@@ -41,12 +34,21 @@ public class ClientHandler implements Runnable {
         this.outputStream = new ObjectOutputStream(this.clientSocket.getOutputStream());
         this.uid = UUID.randomUUID().toString();
 
+        System.out.println("UID: " + getUid() + " is created!!");
         Thread.currentThread().setName(getUid());
     }
 
     private void response(Response response) throws IOException {
         this.outputStream.writeObject(response);
         this.outputStream.flush();
+    }
+
+    public static HashMap<RequestType, Consumer<Request>> registerHandler() {
+        HashMap<RequestType, Consumer<Request>> commands = new HashMap<>();
+
+        commands.put(RequestType.AUTHENTICATION, RequestHandler::AUTHENTICATION_);
+
+        return commands;
     }
 
     @Override
@@ -57,7 +59,7 @@ public class ClientHandler implements Runnable {
                 if (ObjectUtils.isNotEmpty(input)) {
                     Request request = (Request) input;
 
-                    handlers.get(request.getAction()).accept(request);
+                    handlers.get(request.getType()).accept(request);
                 }
             }
         } catch (EOFException e) {

@@ -4,14 +4,14 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.nmjava.chatapp.commons.enums.Action;
+import org.nmjava.chatapp.commons.enums.RequestType;
 
 import java.io.Serializable;
 
-@Setter
 @Getter
+@Setter
 @RequiredArgsConstructor
 public abstract class Request implements Serializable {
     @NonNull
-    protected Action action;
+    protected RequestType type;
 }

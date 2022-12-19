@@ -2,13 +2,11 @@ package org.nmjava.chatapp.client;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import org.nmjava.chatapp.client.networks.ClientSocket;
+import org.nmjava.chatapp.client.networks.SocketClient;
 import org.nmjava.chatapp.client.utils.SceneController;
 
-import java.io.IOException;
-
 public class Main extends Application {
-    private ClientSocket clientSocket;
+    private SocketClient socketClient;
 
     private void registerScene() {
         SceneController sc = new SceneController();
@@ -23,16 +21,14 @@ public class Main extends Application {
         sc.addScene("UserHome", "/org/nmjava/chatapp/client/views/UserHome.fxml");
         sc.addScene("UserFriendOnline", "/org/nmjava/chatapp/client/views/UserFriendOnline.fxml");
 
-        sc.addScene("Test", "/org/nmjava/chatapp/client/views/Test.fxml");
+        sc.addScene("Test", "/org/nmjava/chFatapp/client/views/Test.fxml");
         sc.addScene("TestingComponent", "/org/nmjava/chatapp/client/views/TestingComponents.fxml");
     }
 
     @Override
     public void start(Stage primaryStage) {
-//        clientSocket = ClientSocket.getInstance();
-//        while (!clientSocket.startConnection("localhost", 9999)) {
-//            // Handler error here
-//        }
+        socketClient = new SocketClient();
+        socketClient.startConnection("localhost", 9999);
 
         registerScene();
 

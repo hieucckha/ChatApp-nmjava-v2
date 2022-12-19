@@ -3,7 +3,7 @@ package org.nmjava.chatapp.server.app;
 import java.io.IOException;
 import java.net.ServerSocket;
 
-public class Server {
+public class SocketServer {
 
     private ServerSocket serverSocket;
 
@@ -28,4 +28,6 @@ public class Server {
             }
         }
     }
+
+
 }
