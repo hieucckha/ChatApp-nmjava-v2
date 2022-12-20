@@ -70,6 +70,8 @@ public class SocketClient {
         this.requestQueue.add(request);
     }
 
+    // Class for send request to server
+    // request is read from requestQueue
     private class RequestProcess implements Runnable {
         @Override
         public void run() {
@@ -87,6 +89,8 @@ public class SocketClient {
         }
     }
 
+    // Class for receive response from server
+    // Read object from stream and push to responseQueue
     private class ResponseReceive implements Runnable {
         @Override
         public void run() {
@@ -102,6 +106,8 @@ public class SocketClient {
         }
     }
 
+    // Class for process response from the responseQueue
+    // For each type of response (fire an event to its component)
     private class ResponseProcess implements Runnable {
         private final Map<ResponseType, Consumer<Response>> handlers = new HashMap<>();
 
