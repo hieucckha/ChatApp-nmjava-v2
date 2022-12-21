@@ -24,6 +24,10 @@ public class UserDao {
         return BCrypt.hashpw(plainPassword, BCrypt.gensalt());
     }
 
+    private boolean checkPassword(String plaintext, String hashPw) {
+        return BCrypt.checkpw(plaintext, hashPw);
+    }
+
     public Collection<User> getInfoAll() {
         Collection<User> users = new ArrayList<>();
         String sql = "SELECT username, full_name, address, date_of_birth, gender, email, is_online, is_activated FROM public.users";
@@ -127,6 +131,32 @@ public class UserDao {
             } catch (SQLException sqlEx) {
                 sqlEx.printStackTrace(System.err);
             }
+        });
+    }
+
+    public Optional<String> isAuthUser(String username, String plainPassword) {
+        String sql = "SELECT user_id, password FROM public.users WHERE username = ?";
+
+        return connection.flatMap(conn -> {
+            Optional<String> userID = Optional.of("");
+
+            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setString(1, username);
+
+                ResultSet resultSet = statement.executeQuery();
+
+                if (resultSet.next()) {
+                    String hashPassword = resultSet.getString("password");
+                    if (checkPassword(plainPassword, hashPassword))
+                        userID = Optional.of(resultSet.getString("user_id"));
+
+                }
+
+            } catch (SQLException sqlEx) {
+                sqlEx.printStackTrace(System.err);
+            }
+
+            return userID;
         });
     }
 }
