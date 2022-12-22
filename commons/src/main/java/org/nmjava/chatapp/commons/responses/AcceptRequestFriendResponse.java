@@ -7,9 +7,10 @@ import org.nmjava.chatapp.commons.enums.ResponseType;
 import org.nmjava.chatapp.commons.enums.StatusCode;
 
 @Getter
-public class CreateAccountResponse extends Response {
+public class AcceptRequestFriendResponse extends Response {
     @Builder
-    CreateAccountResponse(@NonNull StatusCode statusCode) {
-        super(ResponseType.CREATE_ACCOUNT, statusCode);
+    public AcceptRequestFriendResponse(@NonNull StatusCode statusCode) {
+        super(ResponseType.ACCEPT_REQUEST_FRIEND, statusCode);
     }
 }
+

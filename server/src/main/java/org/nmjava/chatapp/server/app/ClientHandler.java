@@ -3,29 +3,22 @@ package org.nmjava.chatapp.server.app;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.ObjectUtils;
+import org.nmjava.chatapp.commons.daos.ConservationDao;
+import org.nmjava.chatapp.commons.daos.FriendDao;
 import org.nmjava.chatapp.commons.daos.UserDao;
 import org.nmjava.chatapp.commons.enums.RequestType;
 import org.nmjava.chatapp.commons.enums.StatusCode;
+import org.nmjava.chatapp.commons.models.Conservation;
+import org.nmjava.chatapp.commons.models.Friend;
 import org.nmjava.chatapp.commons.models.User;
-import org.nmjava.chatapp.commons.requests.AuthenticationRequest;
-import org.nmjava.chatapp.commons.requests.CreateAccountRequest;
-import org.nmjava.chatapp.commons.requests.GetListConservationRequest;
-import org.nmjava.chatapp.commons.requests.Request;
-import org.nmjava.chatapp.commons.responses.AuthenticationResponse;
-import org.nmjava.chatapp.commons.responses.CreateAccountResponse;
-import org.nmjava.chatapp.commons.responses.Response;
+import org.nmjava.chatapp.commons.requests.*;
+import org.nmjava.chatapp.commons.responses.*;
 
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.BiConsumer;
 
 @Getter
@@ -177,7 +170,14 @@ public class ClientHandler implements Runnable {
 
             String userID = req.getUserID();
 
+            ConservationDao conservationDao = new ConservationDao();
 
+            Collection<Conservation> conservations = conservationDao.getListConservation(userID);
+            try {
+                clientHandler.response(GetListConservationResponse.builder().conservations(conservations).statusCode(StatusCode.OK).build());
+            } catch (IOException e) {
+                e.printStackTrace(System.err);
+            }
         }
 
         public void GET_LIST_MESSAGE_CONSERVATION_(ClientHandler clientHandler, Request request) {
@@ -185,19 +185,67 @@ public class ClientHandler implements Runnable {
         }
 
         public void GET_LIST_FRIEND_(ClientHandler clientHandler, Request request) {
+            GetListFriendRequest req = (GetListFriendRequest) request;
 
+            String userID = req.getUserID();
+
+            FriendDao friendDao = new FriendDao();
+
+            Collection<Friend> friends = friendDao.getListFriend(userID);
+            try {
+                clientHandler.response(GetListFriendResponse.builder().friends(friends).statusCode(StatusCode.OK).build());
+            } catch (IOException e) {
+                e.printStackTrace(System.err);
+            }
         }
 
         public void GET_LIST_FRIEND_ONLINE_(ClientHandler clientHandler, Request request) {
+            GetListFriendRequest req = (GetListFriendRequest) request;
 
+            String userID = req.getUserID();
+
+            FriendDao friendDao = new FriendDao();
+
+            Collection<Friend> friends = friendDao.getListFriend(userID);
+            try {
+                clientHandler.response(GetListFriendOnlineResponse.builder().friends(friends).statusCode(StatusCode.OK).build());
+            } catch (IOException e) {
+                e.printStackTrace(System.err);
+            }
         }
 
         public void GET_LIST_REQUEST_FRIEND_(ClientHandler clientHandler, Request request) {
+            GetListRequestFriendRequest req = (GetListRequestFriendRequest) request;
 
+            String userID = req.getUserID();
+
+            FriendDao friendDao = new FriendDao();
+
+            Collection<Friend> friends = friendDao.getListRequestFriend(userID);
+            try {
+                clientHandler.response(GetListRequestFriendResponse.builder().friends(friends).statusCode(StatusCode.OK).build());
+            } catch (IOException e) {
+                e.printStackTrace(System.err);
+            }
         }
 
         public void ACCEPT_REQUEST_FRIEND_(ClientHandler clientHandler, Request request) {
+            AcceptRequestFriendRequest req = (AcceptRequestFriendRequest) request;
 
+            String userID = req.getUserID();
+            String friendID = req.getFriendID();
+
+            FriendDao friendDao = new FriendDao();
+
+            Optional<Boolean> isSuccess = friendDao.acceptFriend(userID, friendID);
+            try {
+                if (isSuccess.isPresent())
+                    clientHandler.response(AcceptRequestFriendResponse.builder().statusCode(StatusCode.OK).build());
+                else
+                    clientHandler.response(AcceptRequestFriendResponse.builder().statusCode(StatusCode.BAD_REQUEST).build());
+            } catch (IOException e) {
+                e.printStackTrace(System.err);
+            }
         }
 
         public void SEND_MESSAGE_(ClientHandler clientHandler, Request request) {

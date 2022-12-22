@@ -15,4 +15,10 @@ public class Conservation {
     private String lastSender;
     private LocalDateTime createAt;
     private Boolean isGroup;
+
+    public Conservation(String conservationID, String name, String lastMessage) {
+        setConservationID(conservationID);
+        setName(name);
+        setLastMessage(lastMessage);
+    }
 }

@@ -22,10 +22,10 @@ public class ConservationDao {
         Collection<Conservation> conservations = new ArrayList<>();
 
         String sql = "SELECT con.conservation_id, con.name, conupdate.last_message " +
-                "FROM public.conservations_user conuser " +
-                "join public.conservations con on con.conservation_id = conuser.conservation_id" +
-                "join public.conservation_update conupdate on conupdate.conservation_id = con.conservation_id" +
-                "WHERE user = ?" +
+                "FROM public.conservation_user conuser " +
+                "join public.conservations con on con.conservation_id = conuser.conservation_id " +
+                "join public.conservation_update conupdate on conupdate.conservation_id = con.conservation_id " +
+                "WHERE user = ? " +
                 "ORDER BY conupdate.last_update";
 
         connection.ifPresent(conn -> {
@@ -34,9 +34,11 @@ public class ConservationDao {
 
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
-                    String conservatioID = resultSet.getString("conservation_id");
+                    String conservationID = resultSet.getString("conservation_id");
                     String name = resultSet.getString("name");
+                    String last_message = resultSet.getString("last_message");
 
+                    conservations.add(new Conservation(conservationID, name, last_message));
                 }
             } catch (SQLException e) {
                 e.printStackTrace(System.err);
