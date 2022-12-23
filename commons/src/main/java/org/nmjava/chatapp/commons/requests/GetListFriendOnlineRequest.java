@@ -6,10 +6,10 @@ import org.nmjava.chatapp.commons.enums.RequestType;
 
 @Getter
 public class GetListFriendOnlineRequest extends Request {
-    private String userID;
+    private String username;
 
-    public GetListFriendOnlineRequest(@NonNull String userID) {
+    public GetListFriendOnlineRequest(@NonNull String username) {
         super(RequestType.GET_LIST_FRIEND_ONLINE);
-        this.userID = userID;
+        this.username = username;
     }
 }

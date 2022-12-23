@@ -6,14 +6,14 @@ import org.nmjava.chatapp.commons.enums.RequestType;
 
 @Getter
 public class SearchMessageUserRequest extends Request {
-    private String senderID;
-    private String userID;
+    private String seeker;
+    private String user;
     private String text;
 
-    public SearchMessageUserRequest(@NonNull String senderID, @NonNull String userID, @NonNull String text) {
+    public SearchMessageUserRequest(@NonNull String seeker, @NonNull String user, @NonNull String text) {
         super(RequestType.SEARCH_MESSAGE_USER);
-        this.senderID = senderID;
-        this.userID = userID;
+        this.seeker = seeker;
+        this.user = user;
         this.text = text;
     }
 }

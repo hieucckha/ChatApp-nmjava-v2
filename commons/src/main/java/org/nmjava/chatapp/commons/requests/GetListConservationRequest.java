@@ -7,11 +7,11 @@ import org.nmjava.chatapp.commons.enums.RequestType;
 
 @Getter
 public class GetListConservationRequest extends Request {
-    private String userID;
+    private String username;
 
     @Builder
-    public GetListConservationRequest(@NonNull String userID) {
-        super(RequestType.GET_LIST_MESSAGE_CONSERVATION);
-        this.userID = userID;
+    public GetListConservationRequest(@NonNull String username) {
+        super(RequestType.GET_LIST_CONSERVATION);
+        this.username = username;
     }
 }

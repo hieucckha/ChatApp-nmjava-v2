@@ -8,14 +8,14 @@ import org.nmjava.chatapp.commons.enums.RequestType;
 @Getter
 public class DeleteMessageRequest extends Request {
     private String conservationID;
-    private String userID;
+    private String username;
     private String messageID;
 
     @Builder
-    public DeleteMessageRequest(@NonNull String conservationID, @NonNull String userID, @NonNull String messageID) {
+    public DeleteMessageRequest(@NonNull String conservationID, @NonNull String username, @NonNull String messageID) {
         super(RequestType.DELETE_MESSAGE);
         this.conservationID = conservationID;
-        this.userID = userID;
+        this.username = username;
         this.messageID = messageID;
     }
 }

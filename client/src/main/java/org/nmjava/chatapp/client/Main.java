@@ -29,6 +29,10 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
         socketClient = new SocketClient();
         socketClient.startConnection("localhost", 9999);
+        // Sent Request
+//        socketClient.addRequestToQueue(AuthenticationRequest.builder().username("something herer").password("something herer").build());
+        // Get Response
+//        socketClient.getResponseFromQueue();
 
         registerScene();
 

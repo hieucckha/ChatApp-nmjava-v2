@@ -7,10 +7,9 @@ import org.nmjava.chatapp.commons.enums.ResponseType;
 import org.nmjava.chatapp.commons.enums.StatusCode;
 
 @Getter
-public class AuthenticationResponse extends Response {
-
+public class RemoveUserGroupChatResponse extends Response {
     @Builder
-    public AuthenticationResponse(@NonNull StatusCode statusCode) {
-        super(ResponseType.AUTHENTICATION, statusCode);
+    public RemoveUserGroupChatResponse(@NonNull StatusCode statusCode) {
+        super(ResponseType.REMOVE_USER_GROUP_CHAT, statusCode);
     }
 }

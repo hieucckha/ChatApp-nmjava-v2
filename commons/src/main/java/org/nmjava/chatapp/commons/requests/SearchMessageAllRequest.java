@@ -7,13 +7,13 @@ import org.nmjava.chatapp.commons.enums.RequestType;
 
 @Getter
 public class SearchMessageAllRequest extends Request {
-    private String userID;
+    private String username;
     private String text;
 
     @Builder
-    public SearchMessageAllRequest(@NonNull String userID, @NonNull String text) {
+    public SearchMessageAllRequest(@NonNull String username, @NonNull String text) {
         super(RequestType.SEARCH_MESSAGE_ALL);
-        this.userID = userID;
+        this.username = username;
         this.text = text;
     }
 }

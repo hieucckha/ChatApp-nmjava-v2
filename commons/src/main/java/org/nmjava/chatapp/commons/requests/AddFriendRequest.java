@@ -6,13 +6,13 @@ import lombok.NonNull;
 import org.nmjava.chatapp.commons.enums.RequestType;
 
 @Getter
-public class AcceptRequestFriendRequest extends Request {
+public class AddFriendRequest extends Request {
     private String user;
     private String friend;
 
     @Builder
-    public AcceptRequestFriendRequest(@NonNull String user, @NonNull String friend) {
-        super(RequestType.ACCEPT_REQUEST_FRIEND);
+    public AddFriendRequest(@NonNull String user, @NonNull String friend) {
+        super(RequestType.ADD_FRIEND);
         this.user = user;
         this.friend = friend;
     }

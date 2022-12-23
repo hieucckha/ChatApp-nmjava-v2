@@ -5,12 +5,10 @@ import lombok.Getter;
 import lombok.NonNull;
 import org.nmjava.chatapp.commons.enums.ResponseType;
 import org.nmjava.chatapp.commons.enums.StatusCode;
-
 @Getter
-public class AuthenticationResponse extends Response {
-
+public class RenameGroupChatResponse extends Response {
     @Builder
-    public AuthenticationResponse(@NonNull StatusCode statusCode) {
-        super(ResponseType.AUTHENTICATION, statusCode);
+    RenameGroupChatResponse(@NonNull StatusCode statusCode) {
+        super(ResponseType.RENAME_GROUP_CHAT, statusCode);
     }
 }

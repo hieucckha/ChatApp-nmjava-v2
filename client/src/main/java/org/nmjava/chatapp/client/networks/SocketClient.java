@@ -1,7 +1,6 @@
 package org.nmjava.chatapp.client.networks;
 
 import org.apache.commons.lang3.ObjectUtils;
-import org.nmjava.chatapp.commons.enums.ResponseType;
 import org.nmjava.chatapp.commons.requests.Request;
 import org.nmjava.chatapp.commons.responses.Response;
 
@@ -9,10 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.function.Consumer;
 
 public class SocketClient {
 
@@ -25,9 +21,8 @@ public class SocketClient {
 
     private final LinkedBlockingQueue<Response> responseQueue = new LinkedBlockingQueue<>();
     private final Thread responseReceive = new Thread(new ResponseReceive(), "Response Receive");
-    private final Thread responseProcess = new Thread(new ResponseProcess(), "Response Process");
 
-    public void sendRequest(Request request) throws IOException {
+    private void sendRequest(Request request) throws IOException {
         this.out.writeObject(request);
         this.out.flush();
     }
@@ -47,7 +42,6 @@ public class SocketClient {
 
         requestProcess.start();
         responseReceive.start();
-        responseProcess.start();
 
         return true;
     }
@@ -55,7 +49,6 @@ public class SocketClient {
     public void close() throws IOException {
         this.requestProcess.interrupt();
         this.responseReceive.interrupt();
-        this.responseProcess.interrupt();
 
         if (this.in != null)
             this.in.close();
@@ -68,6 +61,10 @@ public class SocketClient {
 
     public void addRequestToQueue(Request request) {
         this.requestQueue.add(request);
+    }
+
+    public Response getResponseFromQueue() {
+        return this.responseQueue.poll();
     }
 
     // Class for send request to server
@@ -105,28 +102,4 @@ public class SocketClient {
             } while (!Thread.currentThread().isInterrupted());
         }
     }
-
-    // Class for process response from the responseQueue
-    // For each type of response (fire an event to its component)
-    private class ResponseProcess implements Runnable {
-        private final Map<ResponseType, Consumer<Response>> handlers = new HashMap<>();
-
-        private void registerResponseHandler() {
-            handlers.put(ResponseType.AUTHENTICATION, ResponseHandler::AUTHENTICATION_);
-        }
-
-        @Override
-        public void run() {
-            registerResponseHandler();
-
-            do {
-                Response response = responseQueue.poll();
-                if (ObjectUtils.isEmpty(response))
-                    continue;
-
-                handlers.get(response.getType()).accept(response);
-            } while (!Thread.currentThread().isInterrupted());
-        }
-    }
-
 }

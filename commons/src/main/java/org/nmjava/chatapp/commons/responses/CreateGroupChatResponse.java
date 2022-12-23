@@ -7,10 +7,9 @@ import org.nmjava.chatapp.commons.enums.ResponseType;
 import org.nmjava.chatapp.commons.enums.StatusCode;
 
 @Getter
-public class AuthenticationResponse extends Response {
-
+public class CreateGroupChatResponse extends Response {
     @Builder
-    public AuthenticationResponse(@NonNull StatusCode statusCode) {
-        super(ResponseType.AUTHENTICATION, statusCode);
+    CreateGroupChatResponse(@NonNull StatusCode statusCode) {
+        super(ResponseType.CREATE_GROUP_CHAT, statusCode);
     }
 }

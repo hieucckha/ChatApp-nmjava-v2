@@ -7,11 +7,11 @@ import org.nmjava.chatapp.commons.enums.RequestType;
 
 @Getter
 public class GetListFriendRequest extends Request {
-    private String userID;
+    private String username;
 
     @Builder
-    public GetListFriendRequest(@NonNull String userID) {
+    public GetListFriendRequest(@NonNull String username) {
         super(RequestType.GET_LIST_FRIEND);
-        this.userID = userID;
+        this.username = username;
     }
 }

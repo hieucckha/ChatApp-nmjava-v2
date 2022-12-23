@@ -8,14 +8,14 @@ import org.nmjava.chatapp.commons.enums.RequestType;
 @Getter
 public class AddMemberGroupChatRequest extends Request {
     private String conservationID;
-    private String adderID;
-    private String username;
+    private String adder;
+    private String member;
 
     @Builder
-    public AddMemberGroupChatRequest(@NonNull String conservationID, @NonNull String adderID, @NonNull String username) {
+    public AddMemberGroupChatRequest(@NonNull String conservationID, @NonNull String adder, @NonNull String member) {
         super(RequestType.ADD_MEMBER_GROUP_CHAT);
         this.conservationID = conservationID;
-        this.adderID = adderID;
-        this.username = username;
+        this.adder = adder;
+        this.member = member;
     }
 }

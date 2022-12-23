@@ -9,13 +9,13 @@ import java.util.List;
 
 @Getter
 public class CreateGroupChatRequest extends Request {
-    private String creatorID;
-    private List<String> usersID;
+    private String creator;
+    private List<String> members;
 
     @Builder
-    public CreateGroupChatRequest(@NonNull String creatorID, @NonNull List<String> usersID) {
+    public CreateGroupChatRequest(@NonNull String creator, @NonNull List<String> members) {
         super(RequestType.CREATE_GROUP_CHAT);
-        this.creatorID = creatorID;
-        this.usersID = usersID;
+        this.creator = creator;
+        this.members = members;
     }
 }
