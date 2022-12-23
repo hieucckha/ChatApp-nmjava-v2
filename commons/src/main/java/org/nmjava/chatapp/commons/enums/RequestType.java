@@ -1,11 +1,10 @@
 package org.nmjava.chatapp.commons.enums;
 
-// #TODO: Add type request and response
-public enum ResponseType {
+public enum RequestType {
     // User
     AUTHENTICATION,
     CREATE_ACCOUNT,
-    FOR_GOT_PASSWORD,
+    FORGOT_PASSWORD, // #TODO:
     //
 
     // Friend
@@ -22,8 +21,8 @@ public enum ResponseType {
     GET_LIST_MESSAGE_CONSERVATION,
     SEND_MESSAGE,
     DELETE_MESSAGE,
-    SEARCH_MESSAGE_USER,
-    SEARCH_MESSAGE_ALL,
+    SEARCH_MESSAGE_USER, // #TODO:
+    SEARCH_MESSAGE_ALL, // #TODO:
     // Group chat
     CREATE_GROUP_CHAT,
     RENAME_GROUP_CHAT,

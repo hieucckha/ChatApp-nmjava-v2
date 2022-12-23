@@ -5,12 +5,10 @@ module org.nmjava.chatapp.commons {
     requires java.sql;
     requires jbcrypt;
 
-
     exports org.nmjava.chatapp.commons.enums;
     exports org.nmjava.chatapp.commons.responses;
     exports org.nmjava.chatapp.commons.requests;
     exports org.nmjava.chatapp.commons.daos;
     exports org.nmjava.chatapp.commons.models;
     exports org.nmjava.chatapp.commons.utils;
-
 }

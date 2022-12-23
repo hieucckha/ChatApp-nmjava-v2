@@ -1,7 +1,5 @@
 package org.nmjava.chatapp.client.controllers;
 
-import org.nmjava.chatapp.commons.models.modelGroupID;
-import org.nmjava.chatapp.client.utils.SceneController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -9,22 +7,23 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
+import org.nmjava.chatapp.client.utils.SceneController;
+import org.nmjava.chatapp.commons.models.modelGroupID;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.stage.Stage;
-
-public class AdminGroupController implements Initializable{
+public class AdminGroupController implements Initializable {
     @FXML
     private Button listUserBtn;
     @FXML
-    private  Button listLoginBtn;
+    private Button listLoginBtn;
     @FXML
-    private  Button listGroupBtn;
+    private Button listGroupBtn;
     @FXML
     private TableColumn<modelGroupID, Integer> tableGroupID;
     @FXML
@@ -47,28 +46,27 @@ public class AdminGroupController implements Initializable{
         tableView.setItems(list);
 
     }
-    private ObservableList <modelGroupID> list = FXCollections.observableArrayList(
-            new modelGroupID(3,"Chicken gang","Minh","User"),
-            new modelGroupID(2, "Best","Thông","User"),
-            new modelGroupID(3, "Chicken gang","Hiếu","Admin"),
-            new modelGroupID(2, "Best","Hậu","Admin"),
-            new modelGroupID(5, "Master","Khánh","User"),
-            new modelGroupID(10, "Smurf","Bảo","User"),
-            new modelGroupID(7, "Pro vip","Vinh","User"),
-            new modelGroupID(1, "Zac","Quân","User")
+
+    private ObservableList<modelGroupID> list = FXCollections.observableArrayList(
+            new modelGroupID(3, "Chicken gang", "Minh", "User"),
+            new modelGroupID(2, "Best", "Thông", "User"),
+            new modelGroupID(3, "Chicken gang", "Hiếu", "Admin"),
+            new modelGroupID(2, "Best", "Hậu", "Admin"),
+            new modelGroupID(5, "Master", "Khánh", "User"),
+            new modelGroupID(10, "Smurf", "Bảo", "User"),
+            new modelGroupID(7, "Pro vip", "Vinh", "User"),
+            new modelGroupID(1, "Zac", "Quân", "User")
     );
+
     @FXML
-    protected  void handleBtn ( ActionEvent actionEvent)
-    {
+    protected void handleBtn(ActionEvent actionEvent) {
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
 
-        if (actionEvent.getSource() == listUserBtn ){
+        if (actionEvent.getSource() == listUserBtn) {
             listUserClick(stage);
         } else if (actionEvent.getSource() == listGroupBtn) {
             listGroupClick(stage);
-        }
-        else if (actionEvent.getSource()==listLoginBtn)
-        {
+        } else if (actionEvent.getSource() == listLoginBtn) {
             listLoginClick(stage);
         }
     }

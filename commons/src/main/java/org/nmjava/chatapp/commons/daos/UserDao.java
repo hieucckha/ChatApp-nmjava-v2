@@ -16,17 +16,18 @@ public class UserDao {
         connection = ConnectDB.getConnection();
     }
 
-    private UUID genID() {
-        return UUID.randomUUID();
-    }
-
     private String hashPassword(String plainPassword) {
         return BCrypt.hashpw(plainPassword, BCrypt.gensalt());
     }
 
+    private boolean checkPassword(String plaintext, String hashPw) {
+        return BCrypt.checkpw(plaintext, hashPw);
+    }
+
     public Collection<User> getInfoAll() {
         Collection<User> users = new ArrayList<>();
-        String sql = "SELECT username, full_name, address, date_of_birth, gender, email, is_online, is_activated FROM public.users";
+        String sql = "SELECT username, full_name, address, date_of_birth, gender, email, is_online, is_activated " +
+                "FROM public.users";
 
         connection.ifPresent(conn -> {
             try (Statement statement = conn.createStatement(); ResultSet resultSet = statement.executeQuery(sql)) {
@@ -39,7 +40,6 @@ public class UserDao {
                     String email = resultSet.getString("email");
                     Boolean online = resultSet.getBoolean("is_online");
                     Boolean active = resultSet.getBoolean("is_activated");
-//                    System.out.println("11111"+ active);
 
                     User user = new User(username, fullName, address, dateOfBirth, gender, email, online, active);
                     user.setUsername(resultSet.getString("username"));
@@ -57,25 +57,24 @@ public class UserDao {
     public Optional<String> save(User user) {
         User nonNullUser = Objects.requireNonNull(user, "The user is null");
 
-        String sql = "INSERT INTO public.users (user_id, username, password, full_name, address, date_of_birth, gender, email, is_online, is_activated, create_at)" +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)" +
-                "RETURNING user_id";
+        String sql = "INSERT INTO public.users (username, password, full_name, address, date_of_birth, gender, email, is_online, is_activated, create_at) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+                "RETURNING username";
 
         return connection.flatMap(conn -> {
             Optional<String> id = Optional.empty();
 
             try (PreparedStatement statement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-                statement.setString(1, this.genID().toString());
-                statement.setString(2, nonNullUser.getUsername());
-                statement.setString(3, this.hashPassword(nonNullUser.getPassword()));
-                statement.setString(4, nonNullUser.getFullName());
-                statement.setString(5, nonNullUser.getAddress());
-                statement.setDate(6, Date.valueOf(nonNullUser.getDateOfBirth()));
-                statement.setString(7, nonNullUser.getGender());
-                statement.setString(8, nonNullUser.getEmail());
-                statement.setBoolean(9, nonNullUser.getOnline());
-                statement.setBoolean(10, nonNullUser.getActivated());
-                statement.setTimestamp(11, Timestamp.valueOf(nonNullUser.getCreateAt()));
+                statement.setString(1, nonNullUser.getUsername());
+                statement.setString(2, this.hashPassword(nonNullUser.getPassword()));
+                statement.setString(3, nonNullUser.getFullName());
+                statement.setString(4, nonNullUser.getAddress());
+                statement.setDate(5, Date.valueOf(nonNullUser.getDateOfBirth()));
+                statement.setString(6, nonNullUser.getGender());
+                statement.setString(7, nonNullUser.getEmail());
+                statement.setBoolean(8, nonNullUser.getOnline());
+                statement.setBoolean(9, nonNullUser.getActivated());
+                statement.setTimestamp(10, Timestamp.valueOf(nonNullUser.getCreateAt()));
 
                 int numberOfInsertRows = statement.executeUpdate();
 
@@ -96,7 +95,9 @@ public class UserDao {
     }
 
     public void update(User user) {
-        String sql = "UPDATE public.users SET full_name = ?, address = ?, date_of_birth = ?, gender = ?, email = ?, is_online = ?, is_activated = ? WHERE username = ?";
+        String sql = "UPDATE public.users " +
+                "SET full_name = ?, address = ?, date_of_birth = ?, gender = ?, email = ?, is_online = ?, is_activated = ? " +
+                "WHERE username = ?";
 
         connection.ifPresent(conn -> {
             try (PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -127,6 +128,34 @@ public class UserDao {
             } catch (SQLException sqlEx) {
                 sqlEx.printStackTrace(System.err);
             }
+        });
+    }
+
+    public Optional<Boolean> isAuthUser(String username, String plainPassword) {
+        String sql = "SELECT password " +
+                "FROM public.users " +
+                "WHERE username = ?";
+
+        return connection.flatMap(conn -> {
+            Optional<Boolean> isSuccess = Optional.empty();
+
+            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setString(1, username);
+
+                ResultSet resultSet = statement.executeQuery();
+
+                if (resultSet.next()) {
+                    String hashPassword = resultSet.getString("password");
+                    if (checkPassword(plainPassword, hashPassword))
+                        isSuccess = Optional.of(true);
+
+                }
+
+            } catch (SQLException sqlEx) {
+                sqlEx.printStackTrace(System.err);
+            }
+
+            return isSuccess;
         });
     }
 }

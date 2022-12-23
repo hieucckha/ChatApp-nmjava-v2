@@ -24,10 +24,9 @@ public class User {
 //    private BooleanProperty active = new SimpleBooleanProperty();
 
     public User() {
-
     }
 
-    public User(String fullName){
+    public User(String fullName) {
         setUsername(fullName);
     }
 
@@ -40,5 +39,17 @@ public class User {
         setEmail(email);
         setOnline(online);
         setActivated(activated);
+    }
+
+    public User(String username, String password, String fullName, String address, LocalDate dateOfBirth, String gender, String email, boolean online, boolean activated, LocalDateTime createAt) {
+        setUsername(username);
+        setFullName(fullName);
+        setAddress(address);
+        setDateOfBirth(dateOfBirth);
+        setGender(gender);
+        setEmail(email);
+        setOnline(online);
+        setActivated(activated);
+        setCreateAt(createAt);
     }
 }
