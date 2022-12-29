@@ -89,10 +89,10 @@ public class FriendDao {
         connection.ifPresent(conn -> {
             try (PreparedStatement statement = conn.prepareStatement(sql)) {
                 statement.setString(1, username);
-
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
-                    String friendUsername = resultSet.getString("friend_username");
+                    System.out.println(resultSet.getString("user_username"));
+                    String friendUsername = resultSet.getString("user_username");
 
                     friends.add(new Friend(friendUsername, false));
                 }

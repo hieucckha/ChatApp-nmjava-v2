@@ -3,11 +3,12 @@ package org.nmjava.chatapp.commons.models;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class Conservation {
+public class Conservation implements Serializable {
     private String conservationID;
     private String creatorID;
     private String name;

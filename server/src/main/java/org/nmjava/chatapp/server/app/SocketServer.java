@@ -171,7 +171,7 @@ public class SocketServer {
                     Optional<Boolean> isSuccess = userDao.isAuthUser(username, password);
 
                     if (isSuccess.isPresent()) {
-                        clientHandler.response(AuthenticationResponse.builder().statusCode(StatusCode.OK).build());
+                        clientHandler.response((AuthenticationResponse.builder().statusCode(StatusCode.OK).build()));
                         addClientHandlerMap(username, clientHandler);
                     } else
                         clientHandler.response((AuthenticationResponse.builder().statusCode(StatusCode.NOT_FOUND).build()));
@@ -243,10 +243,13 @@ public class SocketServer {
                 GetListRequestFriendRequest req = (GetListRequestFriendRequest) request;
 
                 String username = req.getUsername();
-
+                System.out.println(username);
                 FriendDao friendDao = new FriendDao();
 
                 Collection<Friend> friends = friendDao.getListRequestFriend(username);
+                for(Friend fr : friends){
+                    System.out.println(fr.getUsername());
+                }
                 try {
                     clientHandler.response(GetListRequestFriendResponse.builder().friends(friends).statusCode(StatusCode.OK).build());
                 } catch (IOException e) {

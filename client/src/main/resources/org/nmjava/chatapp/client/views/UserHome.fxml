@@ -41,7 +41,7 @@
                         <Insets left="5.0" right="5.0" />
                     </GridPane.margin>
                 </TextField>
-                <Button minWidth="41.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="81.0" style="-fx-background-color: transparent;" text="Thêm bạn" textFill="#2c2b2b" GridPane.columnIndex="1">
+                <Button fx:id="addFrdBtn" minWidth="41.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="81.0" style="-fx-background-color: transparent;" text="Thêm bạn" textFill="#2c2b2b" GridPane.columnIndex="1">
                     <GridPane.margin>
                         <Insets left="2.0" right="2.0" />
                     </GridPane.margin>
@@ -85,6 +85,18 @@
                         <Tooltip text="Danh sách bạn bè" />
                      </tooltip>
                   </Button>
+                  <VBox alignment="BOTTOM_CENTER" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Button fx:id="logoutBtn" mnemonicParsing="false" styleClass="btnDefault">
+                           <graphic>
+                              <FontIcon iconLiteral="mdi2l-logout" iconSize="70" text="󰍃" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Logout" />
+                           </tooltip>
+                        </Button>
+                     </children>
+                  </VBox>
                     </children>
                 </VBox>
                 <ScrollPane fx:id="spContainer" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" />

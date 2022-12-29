@@ -3,13 +3,14 @@ package org.nmjava.chatapp.commons.models;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
 @Setter
-public class User {
+public class User implements Serializable {
     private UUID userID;
     private String username;
     private String password;
