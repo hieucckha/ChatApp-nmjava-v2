@@ -1,22 +1,28 @@
 package org.nmjava.chatapp.client.controllers;
 
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.nmjava.chatapp.client.Main;
 import org.nmjava.chatapp.client.components.*;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.nmjava.chatapp.client.networks.ThreadRespone;
 import org.nmjava.chatapp.client.utils.SceneController;
+import org.nmjava.chatapp.commons.models.Friend;
 import org.nmjava.chatapp.commons.requests.GetListRequestFriendRequest;
 
+import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class UserHomeController implements Initializable {
@@ -44,6 +50,7 @@ public class UserHomeController implements Initializable {
     private Button addFrdBtn;
 
     private UserTitleChat utc;
+    public static Collection<Friend> listReqAddFriend;
 
     public UserHomeController() {
         this.utc = new UserTitleChat("", 0);
@@ -51,6 +58,7 @@ public class UserHomeController implements Initializable {
 
     @Override
     public void initialize(URL arg0, ResourceBundle agr1) {
+        listReqAddFriend = new ArrayList<>();
         ThreadRespone UserHomeThrd = new ThreadRespone("UserHome");
         this.titleChatContainer.getChildren().add(this.utc);
 
@@ -75,10 +83,9 @@ public class UserHomeController implements Initializable {
         addFrdBtn.setOnMouseClicked(e -> {
             System.out.println(Main.UserName);
             Main.socketClient.addRequestToQueue(GetListRequestFriendRequest.builder().username(Main.UserName).build());
-            Stage AddFriendReqList = new Stage();
-            AddFriendReqList.setScene(SceneController.staticGetScene("ListAddFriendReq"));
-//            AddFriendReqList
-            AddFriendReqList.show();
+            Stage newStage = new Stage();
+            newStage.setScene(SceneController.staticGetScene("ListAddFriendReq"));
+            newStage.show();
         });
     }
 

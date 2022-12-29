@@ -1,7 +1,6 @@
 package org.nmjava.chatapp.client;
 
 import javafx.application.Application;
-import javafx.scene.Node;
 import javafx.stage.Stage;
 import org.nmjava.chatapp.client.networks.SocketClient;
 import org.nmjava.chatapp.client.utils.SceneController;

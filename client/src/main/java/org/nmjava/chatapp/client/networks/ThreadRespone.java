@@ -2,19 +2,26 @@ package org.nmjava.chatapp.client.networks;
 
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.nmjava.chatapp.client.Main;
+import org.nmjava.chatapp.client.components.ContactMessageList;
+import org.nmjava.chatapp.client.components.ReqAddFriendCard;
 import org.nmjava.chatapp.client.controllers.ListReqAddFriendController;
 import org.nmjava.chatapp.client.controllers.LoginController;
+import org.nmjava.chatapp.client.controllers.UserHomeController;
 import org.nmjava.chatapp.client.utils.SceneController;
 import org.nmjava.chatapp.commons.enums.ResponseType;
 import org.nmjava.chatapp.commons.enums.StatusCode;
 import org.nmjava.chatapp.commons.models.Friend;
+import org.nmjava.chatapp.commons.requests.GetListRequestFriendRequest;
 import org.nmjava.chatapp.commons.responses.AddFriendResponse;
 import org.nmjava.chatapp.commons.responses.AuthenticationResponse;
 import org.nmjava.chatapp.commons.responses.GetListRequestFriendResponse;
 import org.nmjava.chatapp.commons.responses.Response;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -22,12 +29,23 @@ public class ThreadRespone implements Runnable {
     private Thread thrd;
     private String currentName;
 
+    public  static ScrollPane reqlistContainer;
+
     private Alert a;
     public ThreadRespone(String name) {
         thrd = new Thread(this, name);
         currentName = name;
         System.out.println("Thread " + currentName + " khoi tao");
         thrd.start();
+    }
+    public  VBox createContactMessageList() {
+        VBox contactMessageList = new ContactMessageList();
+        if(Objects.isNull( UserHomeController.listReqAddFriend)) return contactMessageList;
+        for(Friend friend :  UserHomeController.listReqAddFriend){
+            System.out.println("In component: " + friend.getUsername());
+            contactMessageList.getChildren().add(new ReqAddFriendCard(friend.getUsername()));
+        }
+        return contactMessageList;
     }
     @Override
     public void run() {
@@ -122,12 +140,17 @@ public class ThreadRespone implements Runnable {
                         Collection<Friend> friends = res.getFriends();
 
                         if(!friends.isEmpty()){
+                            UserHomeController.listReqAddFriend = new ArrayList<>();
                             for(Friend friend:friends){
                                 System.out.println(friend.getUsername());
-                                ListReqAddFriendController.listReqAddFriend.add(friend);
+                                UserHomeController.listReqAddFriend.add(friend);
                             }
-//                            ListReqAddFriendController.reqlistContainer.setContent(ListReqAddFriendController.createContactMessageList());
-//                            ListReqAddFriendController.reqlistContainer.setContent(ListReqAddFriendController.createContactMessageList());
+                            Platform.runLater(new Runnable(){
+                                public void run() {
+                                    reqlistContainer.setContent(createContactMessageList());
+                                }
+                            });
+
                         }
                         else{
                             System.out.println("Not found Request Add Friend");
@@ -135,11 +158,11 @@ public class ThreadRespone implements Runnable {
                         break;
                     }
                     case ADD_FRIEND -> {
-                        AddFriendResponse res = (AddFriendResponse) response;
-
-                        ListReqAddFriendController.listReqAddFriend.add(new Friend(res.getFriend(),false));
-//                        ListReqAddFriendController.reqlistContainer.setContent(ListReqAddFriendController.createContactMessageList());
-                        break;
+//                        AddFriendResponse res = (AddFriendResponse) response;
+//
+//                        ListReqAddFriendController.listReqAddFriend.add(new Friend(res.getFriend(),false));
+////                        ListReqAddFriendController.reqlistContainer.setContent(ListReqAddFriendController.createContactMessageList());
+//                        break;
                     }
                 }
 
