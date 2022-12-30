@@ -12,6 +12,7 @@ import org.nmjava.chatapp.client.networks.ThreadRespone;
 import org.nmjava.chatapp.client.utils.SceneController;
 import javafx.stage.Stage;
 import org.nmjava.chatapp.commons.requests.AuthenticationRequest;
+import org.nmjava.chatapp.commons.requests.GetListConservationRequest;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -42,6 +43,7 @@ public class LoginController implements Initializable {
 //        stage.setScene(SceneController.staticGetScene(""));
         // Gửi request Xác thực
         Main.UserName = fdEmail.getText();
+        Main.socketClient.addRequestToQueue(GetListConservationRequest.builder().username(Main.UserName).build());
         Main.socketClient.addRequestToQueue(AuthenticationRequest.builder().username(fdEmail.getText()).password(fdPassword.getText()).build());
     }
 

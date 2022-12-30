@@ -17,9 +17,10 @@ public class Conservation implements Serializable {
     private LocalDateTime createAt;
     private Boolean isGroup;
 
-    public Conservation(String conservationID, String name, String lastMessage) {
+    public Conservation(String conservationID, String name, String lastMessage,Boolean isGroup) {
         setConservationID(conservationID);
         setName(name);
         setLastMessage(lastMessage);
+        setIsGroup(isGroup);
     }
 }

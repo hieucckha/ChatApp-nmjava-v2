@@ -91,7 +91,6 @@ public class FriendDao {
                 statement.setString(1, username);
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
-                    System.out.println(resultSet.getString("user_username"));
                     String friendUsername = resultSet.getString("user_username");
 
                     friends.add(new Friend(friendUsername, false));
@@ -135,8 +134,8 @@ public class FriendDao {
             Optional<Boolean> isSuccess = Optional.empty();
 
             try (PreparedStatement statement = conn.prepareStatement(sql)) {
-                statement.setString(1, user);
-                statement.setString(2, friend);
+                statement.setString(1, friend);
+                statement.setString(2, user);
 
                 int numberOfRowUpdate = statement.executeUpdate();
 

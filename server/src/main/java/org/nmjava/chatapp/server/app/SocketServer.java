@@ -225,13 +225,13 @@ public class SocketServer {
             }
 
             public void GET_LIST_FRIEND_ONLINE_(ClientHandler clientHandler, Request request) {
-                GetListFriendRequest req = (GetListFriendRequest) request;
+                GetListFriendOnlineRequest req = (GetListFriendOnlineRequest) request;
 
                 String username = req.getUsername();
 
                 FriendDao friendDao = new FriendDao();
 
-                Collection<Friend> friends = friendDao.getListFriend(username);
+                Collection<Friend> friends = friendDao.getListFriendOnline(username);
                 try {
                     clientHandler.response(GetListFriendOnlineResponse.builder().friends(friends).statusCode(StatusCode.OK).build());
                 } catch (IOException e) {
@@ -289,6 +289,7 @@ public class SocketServer {
                 String friend = req.getFriend();
 
                 FriendDao friendDao = new FriendDao();
+                ConservationDao conservationDao = new ConservationDao();
 
                 Optional<Boolean> isSuccess = friendDao.acceptFriend(user, friend);
                 try {
@@ -299,6 +300,12 @@ public class SocketServer {
                         if (other != null) {
                             other.response(AddFriendResponse.builder().user(user).friend(friend).statusCode(StatusCode.OK).build());
                         }
+
+                        conservationDao.createConservation(user, new ArrayList<String>() {{
+                            add(friend);
+                        }}, false);
+
+
                     } else
                         clientHandler.response(AcceptRequestFriendResponse.builder().statusCode(StatusCode.BAD_REQUEST).build());
                 } catch (IOException e) {
@@ -333,6 +340,7 @@ public class SocketServer {
                 ConservationDao conservationDao = new ConservationDao();
 
                 Collection<Conservation> conservations = conservationDao.getListConservation(username);
+                System.out.println(conservations.size());
                 try {
                     clientHandler.response(GetListConservationResponse.builder().conservations(conservations).statusCode(StatusCode.OK).build());
                 } catch (IOException e) {

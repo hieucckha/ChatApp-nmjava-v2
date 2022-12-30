@@ -39,6 +39,7 @@ public class ListReqAddFriendController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ThreadRespone.reqlistContainer = reqlistContainer;
+
         sendRequestAddFriendBtn.setOnMouseClicked(e->{
             Main.socketClient.addRequestToQueue(AddFriendRequest.builder().user(Main.UserName).friend(labelName.getText()).build());
         });

@@ -16,6 +16,9 @@ import javafx.scene.layout.VBox;
 import org.nmjava.chatapp.client.networks.ThreadRespone;
 import org.nmjava.chatapp.client.utils.SceneController;
 import org.nmjava.chatapp.commons.models.Friend;
+import org.nmjava.chatapp.commons.requests.GetListConservationRequest;
+import org.nmjava.chatapp.commons.requests.GetListFriendOnlineRequest;
+import org.nmjava.chatapp.commons.requests.GetListFriendRequest;
 import org.nmjava.chatapp.commons.requests.GetListRequestFriendRequest;
 
 import java.io.IOException;
@@ -58,22 +61,21 @@ public class UserHomeController implements Initializable {
 
     @Override
     public void initialize(URL arg0, ResourceBundle agr1) {
+
         listReqAddFriend = new ArrayList<>();
         ThreadRespone UserHomeThrd = new ThreadRespone("UserHome");
         this.titleChatContainer.getChildren().add(this.utc);
 
         spContainer.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         spContainer.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        ThreadRespone.spContainer = spContainer;
 
-        this.spContainer.setContent(createContactMessageList());
 
         contactBtn.setOnMouseClicked(e -> {
-            System.out.println("contactBtn is clicks");
-            this.spContainer.setContent(createContactMessageList());
+            Main.socketClient.addRequestToQueue(GetListConservationRequest.builder().username(Main.UserName).build());
         });
         friendOnlineBtn.setOnMouseClicked(e -> {
-            System.out.println("friendOnlineBtn is clicks");
-            this.spContainer.setContent(createFriendOnlineList());
+            Main.socketClient.addRequestToQueue(GetListFriendOnlineRequest.builder().username(Main.UserName).build());
         });
         logoutBtn.setOnMouseClicked(e -> {
             Main.stage.setTitle("Login");
@@ -86,6 +88,9 @@ public class UserHomeController implements Initializable {
             Stage newStage = new Stage();
             newStage.setScene(SceneController.staticGetScene("ListAddFriendReq"));
             newStage.show();
+        });
+        friendBtn.setOnMouseClicked(e -> {
+            Main.socketClient.addRequestToQueue(GetListFriendRequest.builder().username(Main.UserName).build());
         });
     }
 

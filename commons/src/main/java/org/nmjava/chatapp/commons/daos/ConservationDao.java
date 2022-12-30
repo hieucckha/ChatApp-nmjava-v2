@@ -23,19 +23,20 @@ public class ConservationDao {
     public Collection<Conservation> getListConservation(String username) {
         Collection<Conservation> conservations = new ArrayList<>();
 
-        String sql = "SELECT con.conservation_id, con.name, conupdate.last_message " + "FROM public.conservation_user conuser " + "join public.conservations con on con.conservation_id = conuser.conservation_id " + "join public.conservation_update conupdate on conupdate.conservation_id = con.conservation_id " + "WHERE username = ? " + "ORDER BY conupdate.last_update";
+        String sql = "SELECT con.conservation_id, con.name, conupdate.last_message ,con.is_group " + "FROM public.conservation_user conuser " + "join public.conservations con on con.conservation_id = conuser.conservation_id " + "join public.conservation_update conupdate on conupdate.conservation_id = con.conservation_id " + "WHERE username = ? " + "ORDER BY conupdate.last_update";
 
         connection.ifPresent(conn -> {
             try (PreparedStatement statement = conn.prepareStatement(sql)) {
                 statement.setString(1, username);
-
+                System.out.println(statement);
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
                     String conservationID = resultSet.getString("conservation_id");
                     String name = resultSet.getString("name");
                     String last_message = resultSet.getString("last_message");
+                    Boolean is_Group = resultSet.getBoolean("is_group");
 
-                    conservations.add(new Conservation(conservationID, name, last_message));
+                    conservations.add(new Conservation(conservationID, name, last_message,is_Group));
                 }
             } catch (SQLException e) {
                 e.printStackTrace(System.err);
@@ -145,9 +146,14 @@ public class ConservationDao {
     }
 
     public Optional<Boolean> createConservation(String creatorName, List<String> users, Boolean isGroup) {
-        String createConservationSQL = "INSERT INTO public.conservations (conservation_id, creator_username, name, created_at, is_group " + "VALUES (?, ?, ?, ?, ?) " + "RETURNING conservation_id";
+        for(String name : users)
+        {
+            System.out.println(name);
+        }
+        String createConservationSQL = "INSERT INTO public.conservations (conservation_id, creator_username, name, created_at, is_group) " + "VALUES (?, ?, ?, ?, ?) " + "RETURNING conservation_id";
 
-        String addUserToConservationSQL = "INSERT INTO public.conservation_user (conservation_id, user_name, role) " + "VALUES(?, ?, ?) " + "RETURNING conservation_id";
+        String addUserToConservationSQL = "INSERT INTO public.conservation_user (conservation_id, username, role) " + "VALUES(?, ?, ?) " + "RETURNING conservation_id";
+        String addUpdateToConservationSQL = "INSERT INTO public.conservation_update (conservation_id, last_message, last_sender, last_update) " + "VALUES(?,null,null,now()) " + "RETURNING conservation_id";
 
         return connection.flatMap(conn -> {
             Optional<Boolean> isSuccess = Optional.empty();
@@ -158,10 +164,15 @@ public class ConservationDao {
                 PreparedStatement createConservationStatement = conn.prepareStatement(createConservationSQL, Statement.RETURN_GENERATED_KEYS);
                 createConservationStatement.setString(1, genID().toString());
                 createConservationStatement.setString(2, creatorName);
-                createConservationStatement.setString(3, new String(creatorName + users.get(0) + users.get(1)));
+                if(users.size()>1){
+                    createConservationStatement.setString(3, new String(creatorName+" "  + users.get(0)+" " + users.get(1)));
+                }
+                else{
+                    createConservationStatement.setString(3, new String(creatorName +" " + users.get(0)));
+                }
                 createConservationStatement.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
                 createConservationStatement.setBoolean(5, isGroup);
-
+                System.out.println(createConservationStatement);
                 int rowOfUpdate = createConservationStatement.executeUpdate();
                 if (rowOfUpdate > 0) {
                     try (ResultSet resultSet = createConservationStatement.getGeneratedKeys()) {
@@ -196,6 +207,10 @@ public class ConservationDao {
                             if (rowOfUpdate < 1) return isSuccess;
                         }
                     }
+                    PreparedStatement addUpdateToConservationStatement = conn.prepareStatement(addUpdateToConservationSQL, Statement.RETURN_GENERATED_KEYS);
+                    addUpdateToConservationStatement.setString(1, conservationID.get());
+                    rowOfUpdate = addUpdateToConservationStatement.executeUpdate();
+                    if (rowOfUpdate < 1) return isSuccess;
                 }
 
 
