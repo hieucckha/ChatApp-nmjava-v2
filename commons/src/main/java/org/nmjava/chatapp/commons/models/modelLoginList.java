@@ -1,22 +1,14 @@
 package org.nmjava.chatapp.commons.models;
 
 public class modelLoginList {
-    String userName;
-    String name;
-    String times;
+    private String userName;
+    private String name;
+    private String times;
 
     public modelLoginList(String userName, String name, String times) {
         this.userName = userName;
         this.name = name;
         this.times = times;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
     }
 
     public String getName() {
@@ -25,6 +17,14 @@ public class modelLoginList {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getTimes() {

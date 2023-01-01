@@ -1,6 +1,6 @@
 package org.nmjava.chatapp.client.controllers;
 
-import org.nmjava.chatapp.commons.models.modelGroupID;
+import org.nmjava.chatapp.commons.daos.ListLogDao;
 import org.nmjava.chatapp.commons.models.modelLoginList;
 import org.nmjava.chatapp.client.utils.SceneController;
 import javafx.collections.FXCollections;
@@ -15,12 +15,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 import java.net.URL;
-import java.util.EventListener;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
-import java.util.Vector;
 
 public class AdminLoginController implements Initializable {
-
     @FXML
     private Button listUserBtn;
     @FXML
@@ -28,40 +26,49 @@ public class AdminLoginController implements Initializable {
     @FXML
     private  Button listGroupBtn;
     @FXML
-    private TableColumn <modelLoginList,String> tableLoginUserName;
+    private TableColumn <modelLoginList, String> tableLoginUserName;
     @FXML
-    private TableColumn <modelLoginList,String> tableLoginName;
+    private TableColumn <modelLoginList, String> tableLoginName;
+    @FXML
+    private TableColumn <modelLoginList,String> tableCreateAt;
     @FXML
     private TableView <modelLoginList> tableView;
     @FXML
     private TextArea textAreaLoginTimes;
 
+
+    @FXML
+    public void onClickItem()
+    {
+        if (tableView.getSelectionModel().getSelectedItem() != null) {
+            modelLoginList selected = tableView.getSelectionModel().getSelectedItem();
+            ArrayList<modelLoginList> log_list = (ArrayList<modelLoginList>) new ListLogDao().getListLog(selected.getUserName());
+            StringBuilder line = new StringBuilder();
+            for( modelLoginList list : log_list)
+            {
+                line.append(list.getTimes()+"\n");
+            }
+            textAreaLoginTimes.setText(String.valueOf(line));
+        }
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         tableLoginUserName.setCellValueFactory(new PropertyValueFactory<>("userName"));
         tableLoginName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        tableCreateAt.setCellValueFactory(new PropertyValueFactory<>("times"));
+        tableView.setOnMouseClicked((MouseEvent event) -> {
+            if (event.getClickCount() == 1) {
+                onClickItem();
+            }
+        });
         tableView.setItems(list);
     }
+
+    private ObservableList<modelLoginList> list = FXCollections.observableArrayList(new ListLogDao().getInfoAll());
+
     @FXML
-    public void onClickCollumn(MouseEvent e)
-    {
-        TablePosition tablePosition = tableView.getSelectionModel().getSelectedCells().get(0);
-        int row =tablePosition.getRow();
-        modelLoginList timeList=tableView.getItems().get(row);
-//        System.out.println(timeList.getTimes());
-        textAreaLoginTimes.setText(timeList.getTimes());
-
-
-    }
-
-    private ObservableList<modelLoginList> list = FXCollections.observableArrayList(
-
-            new modelLoginList("nguyenhau","Chicken game","ngày 1\nngày 2\nngày 3\n"),
-            new modelLoginList("nguyehn hung","Chicken game","ngày 1\nngày 2\n ")
-
-    );
-    @FXML
-    protected  void handleBtn ( ActionEvent actionEvent)
+    protected void handleBtn(ActionEvent actionEvent)
     {
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
 
@@ -80,7 +87,6 @@ public class AdminLoginController implements Initializable {
         stage.setScene(SceneController.staticGetScene("AdminHome"));
         stage.show();
     }
-
 
     private void listGroupClick(Stage stage) {
         stage.setScene(SceneController.staticGetScene("AdminGroup"));

@@ -110,10 +110,11 @@
                         </VBox>
                      </right>
                      <center>
-                        <TableView fx:id="tableView" onMouseClicked="#onClickCollumn" prefHeight="354.0" prefWidth="502.0" BorderPane.alignment="CENTER">
+                        <TableView fx:id="tableView" onMouseClicked="#onClickItem" prefHeight="354.0" prefWidth="502.0" BorderPane.alignment="CENTER">
                           <columns>
                             <TableColumn fx:id="tableLoginUserName" editable="false" prefWidth="75.0" sortable="false" text="User name" />
                             <TableColumn fx:id="tableLoginName" editable="false" prefWidth="75.0" sortable="false" text="Name" />
+                              <TableColumn fx:id="tableCreateAt" prefWidth="75.0" text="Created at" />
                           </columns>
                         </TableView>
                      </center>

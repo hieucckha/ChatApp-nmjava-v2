@@ -21,14 +21,14 @@ public class Main extends Application {
         sc.addScene("UserHome", "/org/nmjava/chatapp/client/views/UserHome.fxml");
         sc.addScene("UserFriendOnline", "/org/nmjava/chatapp/client/views/UserFriendOnline.fxml");
 
-        sc.addScene("Test", "/org/nmjava/chFatapp/client/views/Test.fxml");
+//        sc.addScene("Test", "/org/nmjava/chFatapp/client/views/Test.fxml");
         sc.addScene("TestingComponent", "/org/nmjava/chatapp/client/views/TestingComponents.fxml");
     }
 
     @Override
     public void start(Stage primaryStage) {
-        socketClient = new SocketClient();
-        socketClient.startConnection("localhost", 9999);
+//        socketClient = new SocketClient();
+//        socketClient.startConnection("localhost", 9999);
         // Sent Request
 //        socketClient.addRequestToQueue(AuthenticationRequest.builder().username("something herer").password("something herer").build());
         // Get Response
@@ -37,7 +37,7 @@ public class Main extends Application {
         registerScene();
 
         primaryStage.setTitle("Hello!");
-        primaryStage.setScene(SceneController.staticGetScene("AdminHome"));
+        primaryStage.setScene(SceneController.staticGetScene("AdminLogin"));
         primaryStage.setWidth(1200);
         primaryStage.setHeight(800);
         primaryStage.show();

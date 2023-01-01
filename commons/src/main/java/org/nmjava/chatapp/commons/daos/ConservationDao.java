@@ -313,6 +313,36 @@ public class ConservationDao {
             return isSuccess;
         });
     }
+
+
+    public Collection<Conservation> getListGroup() {
+        Collection<Conservation> conservations = new ArrayList<>();
+
+        String sql = "select cer.conservation_id, con.name, users.full_name, cer.role " +
+                "from conservation_user cer " +
+                "join conservations con on cer.conservation_id = con.conservation_id " +
+                "join users on cer.username = users.username " +
+                "where con.is_group = true";
+
+        connection.ifPresent(conn -> {
+            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+                    String conservationID = resultSet.getString("conservation_id");
+                    String grname = resultSet.getString("name");
+                    String full_name = resultSet.getString("full_name");
+                    Integer role = resultSet.getInt("role");
+
+                    conservations.add(new Conservation(conservationID, grname, full_name, role));
+                }
+            } catch (SQLException e) {
+                e.printStackTrace(System.err);
+            }
+        });
+
+        return conservations;
+    }
+
 }
 
 

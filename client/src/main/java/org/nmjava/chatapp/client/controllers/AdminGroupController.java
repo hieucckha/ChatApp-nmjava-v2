@@ -10,8 +10,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Stage;
 import org.nmjava.chatapp.client.utils.SceneController;
+import org.nmjava.chatapp.commons.daos.ConservationDao;
+import org.nmjava.chatapp.commons.models.Conservation;
 import org.nmjava.chatapp.commons.models.modelGroupID;
 
 import java.net.URL;
@@ -25,38 +28,36 @@ public class AdminGroupController implements Initializable {
     @FXML
     private Button listGroupBtn;
     @FXML
-    private TableColumn<modelGroupID, Integer> tableGroupID;
+    private TableColumn<Conservation, String> tableGroupID;
     @FXML
-    public TableColumn<modelGroupID, String> tableGroupName;
+    public TableColumn<Conservation, String> tableGroupName;
     @FXML
-    private TableColumn<modelGroupID, String> tableUserName;
+    private TableColumn<Conservation, String> tableUserName;
     @FXML
-    private TableColumn<modelGroupID, String> tableRole;
+    private TableColumn<Conservation, Integer> tableRole;
     @FXML
-    private TableView<modelGroupID> tableView;
+    private TableView<Conservation> tableView;
 
     @Override
     public void initialize(URL arg0, ResourceBundle agr1) {
         System.out.println("true");
-        tableGroupID.setCellValueFactory(new PropertyValueFactory<>("GroupID"));
-        tableGroupName.setCellValueFactory(new PropertyValueFactory<>("GroupName"));
-        tableUserName.setCellValueFactory(new PropertyValueFactory<>("GroupUserName"));
-        tableRole.setCellValueFactory(new PropertyValueFactory<>("GroupRole"));
+        tableGroupID.setCellValueFactory(new PropertyValueFactory<>("conservationID"));
+        tableGroupID.setCellFactory(TextFieldTableCell.forTableColumn());
+
+        tableGroupName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        tableGroupName.setCellFactory(TextFieldTableCell.forTableColumn());
+
+        tableUserName.setCellValueFactory(new PropertyValueFactory<>("full_name"));
+        tableUserName.setCellFactory(TextFieldTableCell.forTableColumn());
+
+        tableRole.setCellValueFactory(new PropertyValueFactory<>("role"));
+
 
         tableView.setItems(list);
-
     }
 
-    private ObservableList<modelGroupID> list = FXCollections.observableArrayList(
-            new modelGroupID(3, "Chicken gang", "Minh", "User"),
-            new modelGroupID(2, "Best", "Thông", "User"),
-            new modelGroupID(3, "Chicken gang", "Hiếu", "Admin"),
-            new modelGroupID(2, "Best", "Hậu", "Admin"),
-            new modelGroupID(5, "Master", "Khánh", "User"),
-            new modelGroupID(10, "Smurf", "Bảo", "User"),
-            new modelGroupID(7, "Pro vip", "Vinh", "User"),
-            new modelGroupID(1, "Zac", "Quân", "User")
-    );
+    private ObservableList<Conservation> list = FXCollections.observableArrayList(new ConservationDao().getListGroup());
+
 
     @FXML
     protected void handleBtn(ActionEvent actionEvent) {

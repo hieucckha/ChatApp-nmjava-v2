@@ -15,10 +15,20 @@ public class Conservation {
     private String lastSender;
     private LocalDateTime createAt;
     private Boolean isGroup;
+    private String full_name;
+
+    private Integer role;
 
     public Conservation(String conservationID, String name, String lastMessage) {
         setConservationID(conservationID);
         setName(name);
         setLastMessage(lastMessage);
+    }
+
+    public Conservation(String conservationID, String name, String full_name, Integer role) {
+        this.conservationID = conservationID;
+        this.name = name;
+        this.full_name = full_name;
+        this.role = role;
     }
 }
