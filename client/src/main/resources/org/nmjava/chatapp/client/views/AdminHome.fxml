@@ -52,11 +52,6 @@
                                 <Cursor fx:constant="HAND" />
                             </cursor>
                         </Button>
-                  <Button fx:id="blockBtn" mnemonicParsing="false">
-                     <graphic>
-                        <FontIcon iconLiteral="ti-lock" iconSize="23" text="" />
-                     </graphic>
-                  </Button>
                     </children>
                 </HBox>
                 <GridPane VBox.vgrow="ALWAYS">
@@ -150,7 +145,6 @@
                                                 <HBox prefHeight="100.0" prefWidth="185.0">
                                                     <children>
                                                         <Button fx:id="cancelFilterBtn" mnemonicParsing="false" onAction="#cancelFilterButtonOnAction" prefHeight="36.0" prefWidth="291.0" text="Cancel" />
-                                                        <Button mnemonicParsing="false" prefHeight="36.0" prefWidth="291.0" text="Find" />
                                                     </children>
                                                 </HBox>
                                             </children>

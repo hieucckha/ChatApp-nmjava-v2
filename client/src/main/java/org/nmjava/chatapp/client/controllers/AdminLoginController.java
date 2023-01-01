@@ -1,6 +1,7 @@
 package org.nmjava.chatapp.client.controllers;
 
 import org.nmjava.chatapp.commons.daos.ListLogDao;
+import org.nmjava.chatapp.commons.daos.UserDao;
 import org.nmjava.chatapp.commons.models.modelLoginList;
 import org.nmjava.chatapp.client.utils.SceneController;
 import javafx.collections.FXCollections;
@@ -50,6 +51,8 @@ public class AdminLoginController implements Initializable {
             }
             textAreaLoginTimes.setText(String.valueOf(line));
         }
+        tableView.getItems().clear();
+        tableView.setItems(FXCollections.observableArrayList(new ListLogDao().getInfoAll()));
     }
 
     @Override

@@ -7,6 +7,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -164,10 +165,9 @@ public class AdminHomeController implements Initializable {
 
     }
     @FXML
-    public void clickItem(MouseEvent event)
+    public void clickItem()
     {
-        if (event.getClickCount() == 2) //Checking double click
-        {
+
             UserDao userDao = new UserDao();
             User user=tableView.getSelectionModel().getSelectedItem();
             if(user.getActivated()==true)
@@ -181,8 +181,8 @@ public class AdminHomeController implements Initializable {
             userDao.update(user);
 
 
-        }
-        tableView.getItems().clear();
+
+//        tableView.getItems().clear();
         tableView.setItems(FXCollections.observableArrayList(new UserDao().getInfoAll()));
     }
 
@@ -208,6 +208,7 @@ public class AdminHomeController implements Initializable {
             user.setActivated(true);
             user.setCreateAt(LocalDateTime.now());
             user.setGender(sexTextField.getText());
+            user.setOnline(true);
 
 
             userDao.save(user);
@@ -303,12 +304,35 @@ public class AdminHomeController implements Initializable {
             return new ReadOnlyStringWrapper(activeAsString);
         });
 
-        //search list
-
-
-
+        tableView.setOnMouseClicked((MouseEvent event) -> {
+            if (event.getClickCount() == 2) {
+                clickItem();
+            }
+        });
         tableView.toFront();
         tableView.setItems(observableList);
+
+        //search list
+        FilteredList<User> filteredList= new FilteredList<>(observableList,b->true);
+        filterUserName.textProperty().addListener((observable,oldValue,newValue)-> {
+            filteredList.setPredicate(User->{
+                if(newValue.isBlank()||newValue.isEmpty()||newValue==null)
+                {
+                     return true;
+                }
+                String searchKeyWord= newValue.toLowerCase();
+                if(User.getUsername().toLowerCase().indexOf(searchKeyWord)>-1)
+                {
+                    return true;
+                }else
+                    return false;
+            });
+        });
+        SortedList<User> sortedList= new SortedList<>(filteredList);
+
+        sortedList.comparatorProperty().bind(tableView.comparatorProperty());
+
+        tableView.setItems(sortedList);
     }
 
 }
