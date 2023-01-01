@@ -357,7 +357,7 @@ public class SocketServer {
                 ConservationDao conservationDao = new ConservationDao();
                 Collection<Message> messages = conservationDao.getListMessageConservation(conservationID, username);
                 try {
-                    clientHandler.response(GetListMessageConservationResponse.builder().messages(messages).statusCode(StatusCode.OK).build());
+                    clientHandler.response(GetListMessageConservationResponse.builder().messages(messages).conservationID(conservationID).statusCode(StatusCode.OK).build());
                 } catch (IOException e) {
                     e.printStackTrace(System.err);
                 }
@@ -375,9 +375,12 @@ public class SocketServer {
                 try {
                     clientHandler.response(SentMessageResponse.builder().conservationID(conservationID).sender(username).message(message).statusCode(StatusCode.OK).build());
                     for (String user : users) {
+
                         ClientHandler other = getClientHandlerMap(user);
+
                         if (other != null)
-                            other.response(SentMessageResponse.builder().conservationID(conservationID).sender(username).message(message).statusCode(StatusCode.OK).build());
+
+                            other.response(SentMessageResponse.builder().conservationID(conservationID).sender(user).message(message).statusCode(StatusCode.OK).build());
                     }
                 } catch (IOException e) {
                     e.printStackTrace(System.err);

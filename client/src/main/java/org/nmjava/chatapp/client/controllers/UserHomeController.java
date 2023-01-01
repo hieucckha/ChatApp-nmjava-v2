@@ -1,10 +1,13 @@
 package org.nmjava.chatapp.client.controllers;
 
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import org.nmjava.chatapp.client.Main;
 import org.nmjava.chatapp.client.components.*;
@@ -16,10 +19,7 @@ import javafx.scene.layout.VBox;
 import org.nmjava.chatapp.client.networks.ThreadRespone;
 import org.nmjava.chatapp.client.utils.SceneController;
 import org.nmjava.chatapp.commons.models.Friend;
-import org.nmjava.chatapp.commons.requests.GetListConservationRequest;
-import org.nmjava.chatapp.commons.requests.GetListFriendOnlineRequest;
-import org.nmjava.chatapp.commons.requests.GetListFriendRequest;
-import org.nmjava.chatapp.commons.requests.GetListRequestFriendRequest;
+import org.nmjava.chatapp.commons.requests.*;
 
 import java.io.IOException;
 import java.net.URL;
@@ -50,9 +50,18 @@ public class UserHomeController implements Initializable {
     @FXML
     public GridPane chatContainer;
     @FXML
+    private ScrollPane conservationContainer;
+    @FXML
     private Button addFrdBtn;
 
-    private UserTitleChat utc;
+    @FXML
+    private Button sendMsgBtn;
+    @FXML
+    private TextField jtfmsg;
+
+    public static UserTitleChat utc;
+    public static String conservationID;
+
     public static Collection<Friend> listReqAddFriend;
 
     public UserHomeController() {
@@ -61,7 +70,17 @@ public class UserHomeController implements Initializable {
 
     @Override
     public void initialize(URL arg0, ResourceBundle agr1) {
-
+        jtfmsg.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent ke) {
+                if (ke.getCode().equals(KeyCode.ENTER)) {
+                    System.out.println(conservationID);
+                    System.out.println(jtfmsg.getText());
+                    if(!jtfmsg.getText().isEmpty() && !utc.getUserName().isEmpty()&& !utc.getUserName().equals("") )
+                        Main.socketClient.addRequestToQueue(SendMessageRequest.builder().username(Main.UserName).conservationID(UserHomeController.conservationID).message(jtfmsg.getText()).build());
+                }
+            }
+        });
         listReqAddFriend = new ArrayList<>();
         ThreadRespone UserHomeThrd = new ThreadRespone("UserHome");
         this.titleChatContainer.getChildren().add(this.utc);
@@ -69,7 +88,13 @@ public class UserHomeController implements Initializable {
         spContainer.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         spContainer.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         ThreadRespone.spContainer = spContainer;
-
+        ThreadRespone.conservationContainer =conservationContainer;
+        sendMsgBtn.setOnMouseClicked(e -> {
+            System.out.println(conservationID);
+            System.out.println(jtfmsg.getText());
+            if(!jtfmsg.getText().isEmpty() && !utc.getUserName().isEmpty()&& !utc.getUserName().equals("") )
+                Main.socketClient.addRequestToQueue(SendMessageRequest.builder().username(Main.UserName).conservationID(UserHomeController.conservationID).message(jtfmsg.getText()).build());
+        });
 
         contactBtn.setOnMouseClicked(e -> {
             Main.socketClient.addRequestToQueue(GetListConservationRequest.builder().username(Main.UserName).build());
@@ -78,6 +103,7 @@ public class UserHomeController implements Initializable {
             Main.socketClient.addRequestToQueue(GetListFriendOnlineRequest.builder().username(Main.UserName).build());
         });
         logoutBtn.setOnMouseClicked(e -> {
+            conservationContainer.setContent(new VBox());
             Main.stage.setTitle("Login");
             Main.stage.setScene(SceneController.staticGetScene("Login"));
             Main.stage.show();

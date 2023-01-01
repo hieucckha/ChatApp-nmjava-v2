@@ -8,6 +8,9 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import org.nmjava.chatapp.client.Main;
+import org.nmjava.chatapp.client.controllers.UserHomeController;
+import org.nmjava.chatapp.client.utils.SceneController;
 
 import java.io.IOException;
 import java.net.URL;
@@ -58,7 +61,6 @@ public class ContactMessageCard extends HBox implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
     }
 
     public void setAvatarImage(String path) {
