@@ -154,6 +154,27 @@ public class ConservationDao {
         });
     }
 
+    public Collection<String> getMember(String conservationID) {
+        Collection<String> users = new ArrayList<>();
+
+        String sql = "SELECT username " + "FROM public.conservation_user " + "WHERE conservation_id = ?";
+
+        connection.ifPresent(conn -> {
+            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setString(1, conservationID);
+                ResultSet resultSet = statement.executeQuery();
+
+                while (resultSet.next()) {
+                    users.add(resultSet.getString(1));
+                }
+            } catch (SQLException sqlEx) {
+                sqlEx.printStackTrace(System.err);
+            }
+        });
+
+        return users;
+    }
+
     public Collection<String> getMemberExceptRequester(String conservationID, String requester) {
         Collection<String> users = new ArrayList<>();
 
@@ -268,7 +289,7 @@ public class ConservationDao {
     }
 
     public Optional<Integer> getRoleUserConservation(String conservationID, String user) {
-        String sql = "SELECT role " + "FROM public.conservation_user " + "WHERE conservation_id = ?, username = ?";
+        String sql = "SELECT role " + "FROM public.conservation_user " + "WHERE conservation_id = ? and username = ?";
 
         return connection.flatMap(conn -> {
             Optional<Integer> role = Optional.empty();

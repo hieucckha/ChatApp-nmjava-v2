@@ -12,7 +12,7 @@ public class RemoveUserGroupChatResponse extends Response {
     private String member;
 
     @Builder
-    public RemoveUserGroupChatResponse(@NonNull StatusCode statusCode, String conservationId, String member) {
+    public RemoveUserGroupChatResponse(@NonNull StatusCode statusCode,@NonNull String conservationId,@NonNull String member) {
         super(ResponseType.REMOVE_USER_GROUP_CHAT, statusCode);
         this.conservationId = conservationId;
         this.member = member;

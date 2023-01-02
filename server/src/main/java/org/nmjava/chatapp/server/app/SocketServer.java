@@ -149,7 +149,9 @@ public class SocketServer {
             commands.put(RequestType.DELETE_MESSAGE, requestHandler::DELETE_MESSAGE_);
             commands.put(RequestType.SEARCH_MESSAGE_USER, requestHandler::SEARCH_MESSAGE_USER_);
             commands.put(RequestType.SEARCH_MESSAGE_ALL, requestHandler::SEARCH_MESSAGE_ALL_);
+
             commands.put(RequestType.CREATE_GROUP_CHAT, requestHandler::CREATE_GROUP_CHAT_);
+            commands.put(RequestType.GET_LIST_MEMBER_CONSERVATION, requestHandler::GET_LIST_MEMBER_CONSERVATION_);
             commands.put(RequestType.RENAME_GROUP_CHAT, requestHandler::RENAME_GROUP_CHAT_);
             commands.put(RequestType.ADD_MEMBER_GROUP_CHAT, requestHandler::ADD_MEMBER_GROUP_CHAT_);
             commands.put(RequestType.GIVE_ADMIN_USER_GROUP_CHAT, requestHandler::GIVE_ADMIN_USER_GROUP_CHAT_);
@@ -231,10 +233,10 @@ public class SocketServer {
 
                 try {
                     if (isExists.isEmpty()) {
-                        clientHandler.response(CheckUserExistResponse.builder().isExist(false).statusCode(StatusCode.OK).build());
+                        clientHandler.response(CheckUserExistResponse.builder().isExist(false).statusCode(StatusCode.OK).username(username).build());
+                    } else {
+                        clientHandler.response(CheckUserExistResponse.builder().isExist(true).statusCode(StatusCode.OK).username(username).build());
                     }
-
-                    clientHandler.response(CheckUserExistResponse.builder().isExist(true).statusCode(StatusCode.OK).build());
                 } catch (IOException e) {
                     e.printStackTrace(System.err);
                 }
@@ -490,6 +492,21 @@ public class SocketServer {
                 }
             }
 
+            public void GET_LIST_MEMBER_CONSERVATION_(ClientHandler clientHandler, Request request) {
+                GetListMemberConservationRequest req = (GetListMemberConservationRequest) request;
+
+                String conservationID = req.getConservationID();
+
+                ConservationDao conservationDao = new ConservationDao();
+                Collection<String> users = conservationDao.getMember(conservationID);
+
+                try {
+                    clientHandler.response(GetListMemberConservationResponse.builder().users(users).statusCode(StatusCode.OK).build());
+                } catch (IOException e) {
+                    e.printStackTrace(System.err);
+                }
+            }
+
             public void RENAME_GROUP_CHAT_(ClientHandler clientHandler, Request request) {
                 RenameGroupChatRequest req = (RenameGroupChatRequest) request;
 
@@ -513,7 +530,9 @@ public class SocketServer {
                         ClientHandler other = getClientHandlerMap(user);
 
                         if (other != null) {
-                            clientHandler.response(RenameGroupChatResponse.builder().conservationID(conservationID).username(username).newName(newName).statusCode(StatusCode.OK).build());
+                            System.out.println(user);
+                            other.response(RenameGroupChatResponse.builder().conservationID(conservationID).username(username).newName(newName).statusCode(StatusCode.OK).build());
+                            System.out.println("Gui "+user );
                         }
                     }
                 } catch (IOException e) {
@@ -547,13 +566,14 @@ public class SocketServer {
                     }
 
                     clientHandler.response(AddMemberToGroupResponse.builder().conservationID(conservationID).adder(adder).member(member).statusCode(StatusCode.OK).build());
+                    conservationDao.sentMessage(conservationID, "system", String.format("%s was added to group by %s", member, adder));
+                    ArrayList<String> memberInGroup = (ArrayList<String>) conservationDao.getMember(conservationID);
 
-                    ArrayList<String> memberInGroup = (ArrayList<String>) conservationDao.sentMessage(conservationID, "system", String.format("%s was added to group by %s", member, adder));
                     for (String user : memberInGroup) {
                         ClientHandler other = getClientHandlerMap(user);
-
                         if (other != null) {
                             other.response(AddMemberToGroupResponse.builder().conservationID(conservationID).adder(adder).member(member).statusCode(StatusCode.OK).build());
+
                         }
                     }
                 } catch (IOException e) {
@@ -592,7 +612,7 @@ public class SocketServer {
                         ClientHandler other = getClientHandlerMap(user);
 
                         if (other != null) {
-                            clientHandler.response(GiveAdminUserGroupChatResponse.builder().statusCode(StatusCode.OK).build());
+                            other.response(GiveAdminUserGroupChatResponse.builder().statusCode(StatusCode.OK).build());
                         }
                     }
                 } catch (IOException e) {
@@ -616,7 +636,7 @@ public class SocketServer {
 
                     if (role.get() > 1)
                         clientHandler.response(RemoveUserGroupChatResponse.builder().statusCode(StatusCode.BAD_REQUEST).build());
-
+                    ArrayList<String> memberInGroup = (ArrayList<String>) conservationDao.getMember(conservationID);
                     Optional<Boolean> isSuccess = conservationDao.removeUserGroupChat(conservationID, member);
 
                     if (isSuccess.isEmpty()) {
@@ -625,13 +645,13 @@ public class SocketServer {
                     }
 
                     clientHandler.response(RemoveUserGroupChatResponse.builder().conservationId(conservationID).member(member).statusCode(StatusCode.OK).build());
+                    conservationDao.sentMessage(conservationID, "system", String.format("%s was removed from group chat by %s", member, admin));
 
-                    ArrayList<String> memberInGroup = (ArrayList<String>) conservationDao.sentMessage(conservationID, "system", String.format("%s was removed from group chat by %s", member, admin));
                     for (String user : memberInGroup) {
                         ClientHandler other = getClientHandlerMap(user);
 
                         if (other != null) {
-                            clientHandler.response(RemoveUserGroupChatResponse.builder().conservationId(conservationID).member(member).statusCode(StatusCode.OK).build());
+                            other.response(RemoveUserGroupChatResponse.builder().conservationId(conservationID).member(member).statusCode(StatusCode.OK).build());
                         }
                     }
                 } catch (IOException e) {

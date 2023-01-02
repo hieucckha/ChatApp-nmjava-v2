@@ -42,7 +42,7 @@
                         <Insets left="2.0" right="2.0" />
                     </GridPane.margin>
                 </Button>
-                <Button minWidth="41.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="76.0" style="-fx-background-color: transparent;" text="Tao nhóm" textFill="#2c2b2b" GridPane.columnIndex="2" />
+                <Button fx:id="createGroupbtn" minWidth="41.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="76.0" style="-fx-background-color: transparent;" text="Tao nhóm" textFill="#2c2b2b" GridPane.columnIndex="2" />
             </children>
         </GridPane>
         <HBox fx:id="titleChatContainer" alignment="CENTER_LEFT" minWidth="300.0" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" />

@@ -13,7 +13,7 @@ public class RenameGroupChatResponse extends Response {
     private String newName;
 
     @Builder
-    RenameGroupChatResponse(@NonNull StatusCode statusCode, String conservationID, String username, String newName) {
+    RenameGroupChatResponse(@NonNull StatusCode statusCode,@NonNull String conservationID, @NonNull String username,@NonNull String newName) {
         super(ResponseType.RENAME_GROUP_CHAT, statusCode);
         this.conservationID = conservationID;
         this.username = username;

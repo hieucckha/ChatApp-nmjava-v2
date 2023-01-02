@@ -26,6 +26,8 @@ public class Main extends Application {
         sc.addScene("Test", "/org/nmjava/chatapp/client/views/Test.fxml");
         sc.addScene("TestingComponent", "/org/nmjava/chatapp/client/views/TestingComponents.fxml");
         sc.addScene("ListAddFriendReq", "/org/nmjava/chatapp/client/views/ListReqAddFriend.fxml");
+        sc.addScene("CreateGroup", "/org/nmjava/chatapp/client/views/CreateGroupChat.fxml");
+        sc.addScene("SettingConservation", "/org/nmjava/chatapp/client/views/SettingConservation.fxml");
     }
 
     @Override

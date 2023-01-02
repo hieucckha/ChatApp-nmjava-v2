@@ -2,6 +2,7 @@ package org.nmjava.chatapp.client.controllers;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -59,6 +60,8 @@ public class UserHomeController implements Initializable {
     @FXML
     private TextField jtfmsg;
 
+    @FXML
+    private Button createGroupbtn;
     public static UserTitleChat utc;
     public static String conservationID;
 
@@ -85,6 +88,20 @@ public class UserHomeController implements Initializable {
         ThreadRespone UserHomeThrd = new ThreadRespone("UserHome");
         this.titleChatContainer.getChildren().add(this.utc);
 
+        Button setting = new Button("Setting Conservation");
+        setting.setOnMouseClicked(e->{
+            System.out.println(conservationID);
+            if(!Objects.isNull(conservationID) &&!conservationID.isEmpty()&& !conservationID.isBlank())
+                Main.socketClient.addRequestToQueue(GetListMemberConservationRequest.builder().conservationID(conservationID).build());
+            Stage newStage = new Stage();
+            newStage.setTitle("List Member");
+            newStage.setScene(SceneController.staticGetScene("SettingConservation"));
+            newStage.show();
+        });
+        HBox settingbox = new HBox(setting);
+        settingbox.setFillHeight(true);
+        settingbox.setAlignment(Pos.CENTER_RIGHT);
+        this.titleChatContainer.getChildren().add(settingbox);
         spContainer.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         spContainer.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         ThreadRespone.spContainer = spContainer;
@@ -112,7 +129,19 @@ public class UserHomeController implements Initializable {
             System.out.println(Main.UserName);
             Main.socketClient.addRequestToQueue(GetListRequestFriendRequest.builder().username(Main.UserName).build());
             Stage newStage = new Stage();
+            newStage.setTitle("List Request add Friend");
             newStage.setScene(SceneController.staticGetScene("ListAddFriendReq"));
+            newStage.show();
+        });
+        createGroupbtn.setOnMouseClicked(e -> {
+            System.out.println(Main.UserName);
+            Stage newStage = new Stage();
+            newStage.setOnHidden(event->{
+                CreateGroupChatController.listMember = new ArrayList<>();
+                ThreadRespone.listMemberContainer.setContent(new VBox());
+            });
+            newStage.setTitle("Create Group");
+            newStage.setScene(SceneController.staticGetScene("CreateGroup"));
             newStage.show();
         });
         friendBtn.setOnMouseClicked(e -> {
