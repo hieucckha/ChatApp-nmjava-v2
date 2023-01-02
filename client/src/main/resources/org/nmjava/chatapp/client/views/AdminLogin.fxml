@@ -100,12 +100,18 @@
                      <right>
                         <VBox prefHeight="354.0" prefWidth="236.0" style="-fx-background-color: #ddd5d5;" BorderPane.alignment="CENTER">
                            <children>
-                              <Label alignment="CENTER" prefHeight="10.0" prefWidth="190.0" text="List login">
+                              <Label alignment="CENTER" prefHeight="25.0" prefWidth="236.0" text="List login">
                                  <font>
                                     <Font size="16.0" />
                                  </font>
                               </Label>
-                              <TextArea fx:id="textAreaLoginTimes" disable="true" prefHeight="330.0" prefWidth="198.0" VBox.vgrow="ALWAYS" />
+                              <TextArea fx:id="textAreaLoginTimes" disable="true" prefHeight="83.0" prefWidth="236.0" VBox.vgrow="ALWAYS" />
+                              <Label alignment="CENTER" prefHeight="35.0" prefWidth="236.0" text="List Friend" textAlignment="CENTER">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Label>
+                              <TextArea fx:id="textAreaFriendList" disable="true" prefHeight="244.0" prefWidth="236.0" />
                            </children>
                         </VBox>
                      </right>

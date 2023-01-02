@@ -4,6 +4,7 @@ module org.nmjava.chatapp.commons {
 
     requires java.sql;
     requires jbcrypt;
+    requires javafx.controls;
 
     exports org.nmjava.chatapp.commons.enums;
     exports org.nmjava.chatapp.commons.responses;

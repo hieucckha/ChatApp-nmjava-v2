@@ -86,6 +86,7 @@ public class AdminHomeController implements Initializable {
     @FXML
 
     private TableColumn<User, String> sexTable;
+
     @FXML
 
     private TableColumn<User, String> emailTable;
@@ -96,7 +97,8 @@ public class AdminHomeController implements Initializable {
     @FXML
     private TableColumn<User, String> activeColumn;
     @FXML
-    private Button blockBtn;
+    private Button resetBtn;
+
 
     ObservableList<User> observableList = FXCollections.observableArrayList(new UserDao().getInfoAll());
 
@@ -182,7 +184,7 @@ public class AdminHomeController implements Initializable {
 
 
 
-//        tableView.getItems().clear();
+
         tableView.setItems(FXCollections.observableArrayList(new UserDao().getInfoAll()));
     }
 
@@ -224,6 +226,39 @@ public class AdminHomeController implements Initializable {
     }
 
 
+    @FXML
+    private void resetUserInTable(ActionEvent event)
+    {
+        System.out.println(tableView.getSelectionModel().getSelectedItem());
+        User user= tableView.getSelectionModel().getSelectedItem() ;
+        user.setPassword("1234");
+
+        UserDao userDao= new UserDao();
+        userDao.resetPassword(user);
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText("Success");
+        alert.setContentText("Account succesfully created!");
+        alert.showAndWait();
+
+    }
+    @FXML
+    private void deleteUserInTable(ActionEvent event)
+    {
+
+        User user= tableView.getSelectionModel().getSelectedItem() ;
+        UserDao userDao= new UserDao();
+        userDao.delete(user.getUsername());
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText("Success");
+        alert.setContentText("Account succesfully created!");
+        alert.showAndWait();
+
+//        tableView.getItems().clear();
+        tableView.setItems(FXCollections.observableArrayList(new UserDao().getInfoAll()));
+
+    }
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         tableView.setEditable(true);
@@ -251,9 +286,7 @@ public class AdminHomeController implements Initializable {
             User user = event.getRowValue();
             user.setAddress(event.getNewValue());
 
-            System.out.println(user.getOnline());
-            System.out.println(user.getActivated());
-            System.out.println(user.getUsername());
+
 
             UserDao userDao = new UserDao();
             userDao.update(user);
@@ -303,7 +336,7 @@ public class AdminHomeController implements Initializable {
 
             return new ReadOnlyStringWrapper(activeAsString);
         });
-
+        // handle when double click --> change state user( acitve --> block)
         tableView.setOnMouseClicked((MouseEvent event) -> {
             if (event.getClickCount() == 2) {
                 clickItem();
@@ -328,11 +361,11 @@ public class AdminHomeController implements Initializable {
                     return false;
             });
         });
+
         SortedList<User> sortedList= new SortedList<>(filteredList);
-
         sortedList.comparatorProperty().bind(tableView.comparatorProperty());
-
         tableView.setItems(sortedList);
     }
+
 
 }

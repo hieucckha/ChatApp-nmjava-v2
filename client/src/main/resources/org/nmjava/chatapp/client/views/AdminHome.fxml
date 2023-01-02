@@ -52,6 +52,22 @@
                                 <Cursor fx:constant="HAND" />
                             </cursor>
                         </Button>
+                  <Button fx:id="resetBtn" mnemonicParsing="false" onAction="#resetUserInTable" prefHeight="46.0" prefWidth="39.0">
+                     <graphic>
+                        <FontIcon iconLiteral="ti-reload" iconSize="23" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="reset password" />
+                     </tooltip>
+                  </Button>
+                  <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#deleteUserInTable" prefHeight="45.0" prefWidth="39.0">
+                     <graphic>
+                        <FontIcon iconLiteral="ti-brush-alt" iconSize="23" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Empty Tooltip" />
+                     </tooltip>
+                  </Button>
                     </children>
                 </HBox>
                 <GridPane VBox.vgrow="ALWAYS">
@@ -65,6 +81,29 @@
                     <children>
                         <StackPane fx:id="stackPanel" GridPane.columnIndex="1">
                             <children>
+                                <BorderPane fx:id="borderPanelSub1" prefHeight="200.0" prefWidth="200.0">
+                                    <right>
+                                        <VBox fx:id="filterUser" prefHeight="355.0" prefWidth="269.0" style="-fx-background-color: #ddd5d5;" visible="false" BorderPane.alignment="CENTER">
+                                            <children>
+                                                <Label alignment="CENTER" prefHeight="55.0" prefWidth="218.0" text="Filter">
+                                                    <font>
+                                                        <Font size="19.0" />
+                                                    </font>
+                                                </Label>
+                                                <TextField fx:id="filterUserName" prefHeight="33.0" prefWidth="270.0" promptText="UserName">
+                                                    <VBox.margin>
+                                                        <Insets bottom="30.0" />
+                                                    </VBox.margin>
+                                                </TextField>
+                                                <HBox prefHeight="100.0" prefWidth="185.0">
+                                                    <children>
+                                                        <Button fx:id="cancelFilterBtn" mnemonicParsing="false" onAction="#cancelFilterButtonOnAction" prefHeight="36.0" prefWidth="291.0" text="Cancel" />
+                                                    </children>
+                                                </HBox>
+                                            </children>
+                                        </VBox>
+                                    </right>
+                                </BorderPane>
                                 <TableView fx:id="tableView" editable="true" onMouseClicked="#clickItem" prefHeight="200.0" prefWidth="200.0">
                                     <columns>
                                         <TableColumn fx:id="userNameTable" prefWidth="75.0" sortable="false" text="User Name" />
@@ -122,29 +161,6 @@
                                                     <children>
                                                         <Button fx:id="cancelAddBtn" mnemonicParsing="false" onAction="#cancelAddButtonOnAction" prefHeight="52.0" prefWidth="115.0" text="Cancel" />
                                                         <Button fx:id="addData" mnemonicParsing="false" onAction="#AddDataOnAction" prefHeight="52.0" prefWidth="115.0" text="ADD" />
-                                                    </children>
-                                                </HBox>
-                                            </children>
-                                        </VBox>
-                                    </right>
-                                </BorderPane>
-                                <BorderPane fx:id="borderPanelSub1" prefHeight="200.0" prefWidth="200.0">
-                                    <right>
-                                        <VBox fx:id="filterUser" prefHeight="355.0" prefWidth="269.0" style="-fx-background-color: #ddd5d5;" visible="false" BorderPane.alignment="CENTER">
-                                            <children>
-                                                <Label alignment="CENTER" prefHeight="55.0" prefWidth="218.0" text="Filter">
-                                                    <font>
-                                                        <Font size="19.0" />
-                                                    </font>
-                                                </Label>
-                                                <TextField fx:id="filterUserName" prefHeight="33.0" prefWidth="270.0" promptText="UserName">
-                                                    <VBox.margin>
-                                                        <Insets bottom="30.0" />
-                                                    </VBox.margin>
-                                                </TextField>
-                                                <HBox prefHeight="100.0" prefWidth="185.0">
-                                                    <children>
-                                                        <Button fx:id="cancelFilterBtn" mnemonicParsing="false" onAction="#cancelFilterButtonOnAction" prefHeight="36.0" prefWidth="291.0" text="Cancel" />
                                                     </children>
                                                 </HBox>
                                             </children>

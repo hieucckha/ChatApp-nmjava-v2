@@ -6,6 +6,7 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import  javafx.scene.control.Button;
 
 @Getter
 @Setter
@@ -21,6 +22,7 @@ public class User {
     private Boolean online;
     private Boolean activated;
     private LocalDateTime createAt;
+
 //    private BooleanProperty active = new SimpleBooleanProperty();
 
     public User() {
@@ -29,6 +31,7 @@ public class User {
     public User(String fullName) {
         setUsername(fullName);
     }
+
 
     public User(String username, String fullName, String address, LocalDate dateOfBirth, String gender, String email, Boolean online, Boolean activated) {
         setUsername(username);
@@ -39,6 +42,7 @@ public class User {
         setEmail(email);
         setOnline(online);
         setActivated(activated);
+
     }
 
     public User(String username, String password, String fullName, String address, LocalDate dateOfBirth, String gender, String email, boolean online, boolean activated, LocalDateTime createAt) {

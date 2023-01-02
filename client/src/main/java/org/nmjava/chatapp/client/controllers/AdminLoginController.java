@@ -1,7 +1,9 @@
 package org.nmjava.chatapp.client.controllers;
 
+import org.nmjava.chatapp.commons.daos.FriendDao;
 import org.nmjava.chatapp.commons.daos.ListLogDao;
 import org.nmjava.chatapp.commons.daos.UserDao;
+import org.nmjava.chatapp.commons.models.Friend;
 import org.nmjava.chatapp.commons.models.modelLoginList;
 import org.nmjava.chatapp.client.utils.SceneController;
 import javafx.collections.FXCollections;
@@ -36,12 +38,15 @@ public class AdminLoginController implements Initializable {
     private TableView <modelLoginList> tableView;
     @FXML
     private TextArea textAreaLoginTimes;
+    @FXML
+    private TextArea textAreaFriendList;
 
 
     @FXML
     public void onClickItem()
     {
         if (tableView.getSelectionModel().getSelectedItem() != null) {
+            //login list
             modelLoginList selected = tableView.getSelectionModel().getSelectedItem();
             ArrayList<modelLoginList> log_list = (ArrayList<modelLoginList>) new ListLogDao().getListLog(selected.getUserName());
             StringBuilder line = new StringBuilder();
@@ -50,6 +55,16 @@ public class AdminLoginController implements Initializable {
                 line.append(list.getTimes()+"\n");
             }
             textAreaLoginTimes.setText(String.valueOf(line));
+
+            //friend list
+            StringBuilder friendline = new StringBuilder();
+            ArrayList<Friend> friends= (ArrayList<Friend>) new FriendDao().getListFriend(selected.getUserName());
+            for(Friend friend: friends)
+            {
+                friendline.append(friend.getUsername()+"\n");
+            }
+            textAreaFriendList.setText(String.valueOf(friendline));
+
         }
         tableView.getItems().clear();
         tableView.setItems(FXCollections.observableArrayList(new ListLogDao().getInfoAll()));
