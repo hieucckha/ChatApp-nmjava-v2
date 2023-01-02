@@ -5,7 +5,8 @@ public enum ResponseType {
     // User
     AUTHENTICATION,
     CREATE_ACCOUNT,
-    FOR_GOT_PASSWORD,
+    FORGOT_PASSWORD,
+    CHECK_USER_EXIST,
     //
 
     // Friend

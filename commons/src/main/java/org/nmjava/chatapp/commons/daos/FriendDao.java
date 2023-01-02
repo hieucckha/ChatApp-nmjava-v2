@@ -147,4 +147,25 @@ public class FriendDao {
             return isSuccess;
         });
     }
+
+    public Optional<Boolean> rejectFriend(String user, String friend) {
+        String sql = "DELETE FROM public.friends WHERE user_username = ? and friend_username = ?";
+
+        return connection.flatMap(conn -> {
+            Optional<Boolean> isSuccess = Optional.empty();
+
+            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setString(1, friend);
+                statement.setString(2, user);
+
+                int numberOfRowUpdate = statement.executeUpdate();
+
+                if (numberOfRowUpdate > 0) isSuccess = Optional.of(true);
+            } catch (SQLException e) {
+                e.printStackTrace(System.err);
+            }
+
+            return isSuccess;
+        });
+    }
 }

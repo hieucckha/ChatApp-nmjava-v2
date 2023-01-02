@@ -1,35 +1,27 @@
 package org.nmjava.chatapp.client.networks;
 
 import javafx.application.Platform;
-import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import org.nmjava.chatapp.client.Main;
 import org.nmjava.chatapp.client.components.*;
-import org.nmjava.chatapp.client.controllers.ListReqAddFriendController;
-import org.nmjava.chatapp.client.controllers.LoginController;
 import org.nmjava.chatapp.client.controllers.UserHomeController;
 import org.nmjava.chatapp.client.utils.SceneController;
-import org.nmjava.chatapp.commons.enums.ResponseType;
 import org.nmjava.chatapp.commons.enums.StatusCode;
 import org.nmjava.chatapp.commons.models.Conservation;
 import org.nmjava.chatapp.commons.models.Friend;
 import org.nmjava.chatapp.commons.models.Message;
 import org.nmjava.chatapp.commons.requests.GetListConservationRequest;
-import org.nmjava.chatapp.commons.requests.GetListFriendRequest;
 import org.nmjava.chatapp.commons.requests.GetListMessageConservationRequest;
 import org.nmjava.chatapp.commons.requests.GetListRequestFriendRequest;
 import org.nmjava.chatapp.commons.responses.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -37,7 +29,7 @@ public class ThreadRespone implements Runnable {
     private Thread thrd;
     public String currentName;
 
-    public  static ScrollPane reqlistContainer;
+    public static ScrollPane reqlistContainer;
 
 
     public static ScrollPane spContainer;
@@ -46,25 +38,28 @@ public class ThreadRespone implements Runnable {
 
 
     private Alert a;
+
     public ThreadRespone(String name) {
         thrd = new Thread(this, name);
         currentName = name;
         System.out.println("Thread " + currentName + " khoi tao");
         thrd.start();
     }
-    public  VBox createContactMessageList() {
+
+    public VBox createContactMessageList() {
         VBox contactMessageList = new ContactMessageList();
-        if(Objects.isNull( UserHomeController.listReqAddFriend)) return contactMessageList;
-        for(Friend friend :  UserHomeController.listReqAddFriend){
+        if (Objects.isNull(UserHomeController.listReqAddFriend)) return contactMessageList;
+        for (Friend friend : UserHomeController.listReqAddFriend) {
             System.out.println("In component: " + friend.getUsername());
             contactMessageList.getChildren().add(new ReqAddFriendCard(friend.getUsername()));
         }
         UserHomeController.listReqAddFriend = new ArrayList<>();
         return contactMessageList;
     }
+
     @Override
     public void run() {
-        Platform.runLater(new Runnable(){
+        Platform.runLater(new Runnable() {
             public void run() {
                 a = new Alert(Alert.AlertType.NONE);
             }
@@ -82,7 +77,7 @@ public class ThreadRespone implements Runnable {
                 }
 //                System.out.println(currentName+": " + !Main.stage.getTitle().equals(currentName));
 //                System.out.println(currentName);
-                if(!Main.stage.getTitle().equals(currentName)){
+                if (!Main.stage.getTitle().equals(currentName)) {
                     break;
                 }
 //                System.out.println(currentName);
@@ -92,12 +87,11 @@ public class ThreadRespone implements Runnable {
                 }
                 System.out.println("Type: " + response.getType());
 
-                switch (response.getType())
-                {
+                switch (response.getType()) {
                     case AUTHENTICATION -> {
                         AuthenticationResponse res = (AuthenticationResponse) response;
-                        if(res.getStatusCode()== StatusCode.OK){
-                            Platform.runLater(new Runnable(){
+                        if (res.getStatusCode() == StatusCode.OK) {
+                            Platform.runLater(new Runnable() {
                                 public void run() {
                                     a.setAlertType(Alert.AlertType.CONFIRMATION);
                                     a.setContentText("Dang nhap thanh cong");
@@ -110,9 +104,8 @@ public class ThreadRespone implements Runnable {
                                     Main.stage.show();
                                 }
                             });
-                        }
-                        else if(res.getStatusCode()== StatusCode.NOT_FOUND) {
-                            Platform.runLater(new Runnable(){
+                        } else if (res.getStatusCode() == StatusCode.NOT_FOUND) {
+                            Platform.runLater(new Runnable() {
                                 public void run() {
                                     a.setAlertType(Alert.AlertType.WARNING);
                                     a.setContentText("Vui long nhap lai tai khoan mat khau");
@@ -126,8 +119,8 @@ public class ThreadRespone implements Runnable {
                     }
                     case CREATE_ACCOUNT -> {
 
-                        if(response.getStatusCode()== StatusCode.OK){
-                            Platform.runLater(new Runnable(){
+                        if (response.getStatusCode() == StatusCode.OK) {
+                            Platform.runLater(new Runnable() {
                                 public void run() {
                                     a.setAlertType(Alert.AlertType.CONFIRMATION);
                                     a.setContentText("Dang ki thanh cong");
@@ -137,9 +130,8 @@ public class ThreadRespone implements Runnable {
                                     Main.stage.show();
                                 }
                             });
-                        }
-                        else {
-                            Platform.runLater(new Runnable(){
+                        } else {
+                            Platform.runLater(new Runnable() {
                                 public void run() {
                                     a.setAlertType(Alert.AlertType.WARNING);
                                     a.setContentText("Tai Khoan da ton tai");
@@ -155,21 +147,20 @@ public class ThreadRespone implements Runnable {
                         GetListRequestFriendResponse res = (GetListRequestFriendResponse) response;
                         Collection<Friend> friends = res.getFriends();
 
-                        if(!friends.isEmpty()){
+                        if (!friends.isEmpty()) {
                             UserHomeController.listReqAddFriend = new ArrayList<>();
-                            for(Friend friend:friends){
+                            for (Friend friend : friends) {
                                 System.out.println(friend.getUsername());
                                 UserHomeController.listReqAddFriend.add(friend);
                             }
-                            Platform.runLater(new Runnable(){
+                            Platform.runLater(new Runnable() {
                                 public void run() {
                                     reqlistContainer.setContent(createContactMessageList());
                                 }
                             });
 
-                        }
-                        else{
-                            Platform.runLater(new Runnable(){
+                        } else {
+                            Platform.runLater(new Runnable() {
                                 public void run() {
                                     reqlistContainer.setContent(createContactMessageList());
                                 }
@@ -187,20 +178,19 @@ public class ThreadRespone implements Runnable {
                     case GET_LIST_FRIEND -> {
                         GetListFriendResponse res = (GetListFriendResponse) response;
                         Collection<Friend> friends = res.getFriends();
-                        if(!friends.isEmpty()){
+                        if (!friends.isEmpty()) {
                             VBox friendOnlineList = new FriendOnlineList();
-                            for (Friend friend:friends) {
+                            for (Friend friend : friends) {
                                 friendOnlineList.getChildren().add(new FriendCard(friend.getUsername()));
                             }
-                            Platform.runLater(new Runnable(){
+                            Platform.runLater(new Runnable() {
                                 public void run() {
                                     spContainer.setContent(friendOnlineList);
                                 }
                             });
 
-                        }
-                        else{
-                            Platform.runLater(new Runnable(){
+                        } else {
+                            Platform.runLater(new Runnable() {
                                 public void run() {
                                     spContainer.setContent(new VBox());
                                 }
@@ -211,16 +201,14 @@ public class ThreadRespone implements Runnable {
                     case GET_LIST_CONSERVATION -> {
                         GetListConservationResponse res = (GetListConservationResponse) response;
                         Collection<Conservation> conservations = res.getConservations();
-                        if(!conservations.isEmpty()){
+                        if (!conservations.isEmpty()) {
                             System.out.println(conservations.size());
                             VBox friendOnlineList = new FriendOnlineList();
-                            for (Conservation conservation:conservations) {
+                            for (Conservation conservation : conservations) {
                                 System.out.println(conservation.getName());
-                                if(!conservation.getIsGroup())
-                                {
-                                    String [] listName = conservation.getName().split(" ");
-                                    if(listName[1].equals(Main.UserName))
-                                    {
+                                if (!conservation.getIsGroup()) {
+                                    String[] listName = conservation.getName().split(" ");
+                                    if (listName[1].equals(Main.UserName)) {
                                         FriendOnlineCard newContact = new FriendOnlineCard(listName[0]);
                                         newContact.setOnMouseClicked(e -> {
                                             Main.socketClient.addRequestToQueue(GetListMessageConservationRequest.builder().username(Main.UserName).conservationID(conservation.getConservationID()).build());
@@ -228,8 +216,7 @@ public class ThreadRespone implements Runnable {
                                             UserHomeController.conservationID = conservation.getConservationID();
                                         });
                                         friendOnlineList.getChildren().add(newContact);
-                                    }
-                                    else {
+                                    } else {
                                         FriendOnlineCard newContact = new FriendOnlineCard(listName[1]);
                                         newContact.setOnMouseClicked(e -> {
                                             Main.socketClient.addRequestToQueue(GetListMessageConservationRequest.builder().username(Main.UserName).conservationID(conservation.getConservationID()).build());
@@ -238,8 +225,7 @@ public class ThreadRespone implements Runnable {
                                         });
                                         friendOnlineList.getChildren().add(newContact);
                                     }
-                                }
-                                else {
+                                } else {
                                     FriendOnlineCard newContact = new FriendOnlineCard(conservation.getName());
                                     newContact.setOnMouseClicked(e -> {
                                         Main.socketClient.addRequestToQueue(GetListMessageConservationRequest.builder().username(Main.UserName).conservationID(conservation.getConservationID()).build());
@@ -251,15 +237,14 @@ public class ThreadRespone implements Runnable {
                                 }
 
                             }
-                            Platform.runLater(new Runnable(){
+                            Platform.runLater(new Runnable() {
                                 public void run() {
                                     spContainer.setContent(friendOnlineList);
                                 }
                             });
 
-                        }
-                        else{
-                            Platform.runLater(new Runnable(){
+                        } else {
+                            Platform.runLater(new Runnable() {
                                 public void run() {
                                     spContainer.setContent(new VBox());
                                 }
@@ -270,20 +255,19 @@ public class ThreadRespone implements Runnable {
                     case GET_LIST_FRIEND_ONLINE -> {
                         GetListFriendOnlineResponse res = (GetListFriendOnlineResponse) response;
                         Collection<Friend> friends = res.getFriends();
-                        if(!friends.isEmpty()){
+                        if (!friends.isEmpty()) {
                             VBox friendOnlineList = new FriendOnlineList();
-                            for (Friend friend:friends) {
+                            for (Friend friend : friends) {
                                 friendOnlineList.getChildren().add(new FriendOnlineCard(friend.getUsername()));
                             }
-                            Platform.runLater(new Runnable(){
+                            Platform.runLater(new Runnable() {
                                 public void run() {
                                     spContainer.setContent(friendOnlineList);
                                 }
                             });
 
-                        }
-                        else{
-                            Platform.runLater(new Runnable(){
+                        } else {
+                            Platform.runLater(new Runnable() {
                                 public void run() {
                                     spContainer.setContent(new VBox());
                                 }
@@ -296,37 +280,33 @@ public class ThreadRespone implements Runnable {
                         Collection<Message> messages = res.getMessages();
                         String conservationID = res.getConservationID();
 //                        System.out.println(messages.(messages.size()-1).getSender());
-                        if(!conservationID.equals(UserHomeController.conservationID)) break;
-                        if(!messages.isEmpty()){
+                        if (!conservationID.equals(UserHomeController.conservationID)) break;
+                        if (!messages.isEmpty()) {
                             VBox ContactMessageList = new ContactMessageList();
-                            for (Message msg :messages) {
+                            for (Message msg : messages) {
                                 int randomNum = ThreadLocalRandom.current().nextInt(1, 100 + 1);
                                 System.out.println(randomNum);
-                                if(randomNum<50)
-                                {
+                                if (randomNum < 50) {
                                     HBox newLine = new HBox();
                                     newLine.setAlignment(Pos.CENTER);
                                     newLine.getChildren().add(new Label(msg.getCreateAt().toString()));
                                     newLine.setFillHeight(true);
                                     ContactMessageList.getChildren().add(newLine);
                                 }
-                                if(msg.getSender().equals(Main.UserName))
-                                {
-                                    ContactMessageList.getChildren().add(new conservationLine(msg,true));
-                                }
-                                else {
-                                    ContactMessageList.getChildren().add(new conservationLine(msg,false));
+                                if (msg.getSender().equals(Main.UserName)) {
+                                    ContactMessageList.getChildren().add(new conservationLine(msg, true));
+                                } else {
+                                    ContactMessageList.getChildren().add(new conservationLine(msg, false));
                                 }
                             }
-                            Platform.runLater(new Runnable(){
+                            Platform.runLater(new Runnable() {
                                 public void run() {
                                     conservationContainer.setContent(ContactMessageList);
                                 }
                             });
 
-                        }
-                        else{
-                            Platform.runLater(new Runnable(){
+                        } else {
+                            Platform.runLater(new Runnable() {
                                 public void run() {
                                     conservationContainer.setContent(new VBox());
                                 }
@@ -340,7 +320,7 @@ public class ThreadRespone implements Runnable {
                         Main.socketClient.addRequestToQueue(GetListMessageConservationRequest.builder().username(Main.UserName).conservationID(conservationID).build());
                         break;
                     }
-                    case CREATE_GROUP_CHAT, ADD_MEMBER_GROUP_CHAT,GIVE_ADMIN_USER_GROUP_CHAT,REMOVE_USER_GROUP_CHAT,RENAME_GROUP_CHAT -> {
+                    case CREATE_GROUP_CHAT, ADD_MEMBER_GROUP_CHAT, GIVE_ADMIN_USER_GROUP_CHAT, REMOVE_USER_GROUP_CHAT, RENAME_GROUP_CHAT -> {
                         Main.socketClient.addRequestToQueue(GetListConservationRequest.builder().username(Main.UserName).build());
                         break;
                     }

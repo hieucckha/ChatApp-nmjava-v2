@@ -5,6 +5,7 @@ public enum RequestType {
     AUTHENTICATION,
     CREATE_ACCOUNT,
     FORGOT_PASSWORD, // #TODO:
+    CHECK_USER_EXIST,
     //
 
     // Friend

@@ -134,6 +134,7 @@ public class SocketServer {
             commands.put(RequestType.AUTHENTICATION, requestHandler::AUTHENTICATION_);
             commands.put(RequestType.CREATE_ACCOUNT, requestHandler::CREATE_ACCOUNT_);
             commands.put(RequestType.FORGOT_PASSWORD, requestHandler::FORGOT_PASSWORD_);
+            commands.put(RequestType.CHECK_USER_EXIST, requestHandler::CHECK_USER_EXIST_);
 
             commands.put(RequestType.GET_LIST_FRIEND, requestHandler::GET_LIST_FRIEND_);
             commands.put(RequestType.GET_LIST_FRIEND_ONLINE, requestHandler::GET_LIST_FRIEND_ONLINE_);
@@ -170,11 +171,20 @@ public class SocketServer {
                 try {
                     Optional<Boolean> isSuccess = userDao.isAuthUser(username, password);
 
-                    if (isSuccess.isPresent()) {
-                        clientHandler.response((AuthenticationResponse.builder().statusCode(StatusCode.OK).build()));
-                        addClientHandlerMap(username, clientHandler);
-                    } else
-                        clientHandler.response((AuthenticationResponse.builder().statusCode(StatusCode.NOT_FOUND).build()));
+                    if (isSuccess.isEmpty()) {
+                        clientHandler.response(AuthenticationResponse.builder().statusCode(StatusCode.NOT_FOUND).build());
+                        return;
+                    }
+
+                    isSuccess = userDao.updateUserOnline(username, true);
+
+                    if (isSuccess.isEmpty()) {
+                        clientHandler.response(AuthenticationResponse.builder().statusCode(StatusCode.BAD_REQUEST).build());
+                        return;
+                    }
+
+                    clientHandler.response(AuthenticationResponse.builder().statusCode(StatusCode.OK).build());
+                    addClientHandlerMap(username, clientHandler);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -195,11 +205,12 @@ public class SocketServer {
                 Optional<String> userID = userDao.save(new User(username, password, fullName, address, dateOfBirth, gender, email, false, true, LocalDateTime.now()));
 
                 try {
-                    if (userID.isPresent()) {
-                        clientHandler.response(CreateAccountResponse.builder().statusCode(StatusCode.OK).build());
-                    } else {
+                    if (userID.isEmpty()) {
                         clientHandler.response(CreateAccountResponse.builder().statusCode(StatusCode.BAD_REQUEST).build());
+                        return;
                     }
+
+                    clientHandler.response(CreateAccountResponse.builder().statusCode(StatusCode.OK).build());
                 } catch (IOException e) {
                     e.printStackTrace(System.err);
                 }
@@ -207,6 +218,26 @@ public class SocketServer {
 
             public void FORGOT_PASSWORD_(ClientHandler clientHandler, Request request) {
 
+            }
+
+            public void CHECK_USER_EXIST_(ClientHandler clientHandler, Request request) {
+                CheckUserExistRequest req = (CheckUserExistRequest) request;
+
+                String username = req.getUsername();
+
+                UserDao userDao = new UserDao();
+
+                Optional<Boolean> isExists = userDao.isUserExists(username);
+
+                try {
+                    if (isExists.isEmpty()) {
+                        clientHandler.response(CheckUserExistResponse.builder().isExist(false).statusCode(StatusCode.OK).build());
+                    }
+
+                    clientHandler.response(CheckUserExistResponse.builder().isExist(true).statusCode(StatusCode.OK).build());
+                } catch (IOException e) {
+                    e.printStackTrace(System.err);
+                }
             }
 
             public void GET_LIST_FRIEND_(ClientHandler clientHandler, Request request) {
@@ -217,6 +248,7 @@ public class SocketServer {
                 FriendDao friendDao = new FriendDao();
 
                 Collection<Friend> friends = friendDao.getListFriend(username);
+
                 try {
                     clientHandler.response(GetListFriendResponse.builder().friends(friends).statusCode(StatusCode.OK).build());
                 } catch (IOException e) {
@@ -232,6 +264,7 @@ public class SocketServer {
                 FriendDao friendDao = new FriendDao();
 
                 Collection<Friend> friends = friendDao.getListFriendOnline(username);
+
                 try {
                     clientHandler.response(GetListFriendOnlineResponse.builder().friends(friends).statusCode(StatusCode.OK).build());
                 } catch (IOException e) {
@@ -247,9 +280,10 @@ public class SocketServer {
                 FriendDao friendDao = new FriendDao();
 
                 Collection<Friend> friends = friendDao.getListRequestFriend(username);
-                for(Friend fr : friends){
+                for (Friend fr : friends) {
                     System.out.println(fr.getUsername());
                 }
+
                 try {
                     clientHandler.response(GetListRequestFriendResponse.builder().friends(friends).statusCode(StatusCode.OK).build());
                 } catch (IOException e) {
@@ -266,16 +300,18 @@ public class SocketServer {
                 FriendDao friendDao = new FriendDao();
 
                 Optional<Boolean> isSuccess = friendDao.addFriend(user, friend);
-                try {
-                    if (isSuccess.isPresent()) {
-                        clientHandler.response(AddFriendResponse.builder().statusCode(StatusCode.OK).build());
 
-                        ClientHandler other = getClientHandlerMap(friend);
-                        if (other != null) {
-                            other.response(AddFriendResponse.builder().user(user).friend(friend).statusCode(StatusCode.OK).build());
-                        }
-                    } else {
+                try {
+                    if (isSuccess.isEmpty()) {
                         clientHandler.response(AddFriendResponse.builder().statusCode(StatusCode.BAD_REQUEST).build());
+                        return;
+                    }
+
+                    clientHandler.response(AddFriendResponse.builder().statusCode(StatusCode.OK).build());
+
+                    ClientHandler other = getClientHandlerMap(friend);
+                    if (other != null) {
+                        other.response(AddFriendResponse.builder().user(user).friend(friend).statusCode(StatusCode.OK).build());
                     }
                 } catch (IOException e) {
                     e.printStackTrace(System.err);
@@ -293,21 +329,26 @@ public class SocketServer {
 
                 Optional<Boolean> isSuccess = friendDao.acceptFriend(user, friend);
                 try {
-                    if (isSuccess.isPresent()) {
-                        clientHandler.response(AcceptRequestFriendResponse.builder().statusCode(StatusCode.OK).build());
-
-                        ClientHandler other = getClientHandlerMap(user);
-                        if (other != null) {
-                            other.response(AddFriendResponse.builder().user(user).friend(friend).statusCode(StatusCode.OK).build());
-                        }
-
-                        conservationDao.createConservation(user, new ArrayList<String>() {{
-                            add(friend);
-                        }}, false);
-
-
-                    } else
+                    if (isSuccess.isEmpty()) {
                         clientHandler.response(AcceptRequestFriendResponse.builder().statusCode(StatusCode.BAD_REQUEST).build());
+                        return;
+                    }
+                    isSuccess = conservationDao.createConservation(user, new ArrayList<String>() {{
+                        add(friend);
+                    }}, false);
+
+                    if (isSuccess.isEmpty()) {
+                        clientHandler.response(AcceptRequestFriendResponse.builder().statusCode(StatusCode.BAD_REQUEST).build());
+                        return;
+                    }
+
+                    clientHandler.response(AcceptRequestFriendResponse.builder().statusCode(StatusCode.OK).build());
+
+                    ClientHandler other = getClientHandlerMap(user);
+                    if (other != null) {
+                        other.response(AddFriendResponse.builder().user(user).friend(friend).statusCode(StatusCode.OK).build());
+                    }
+
                 } catch (IOException e) {
                     e.printStackTrace(System.err);
                 }
@@ -321,12 +362,14 @@ public class SocketServer {
 
                 FriendDao friendDao = new FriendDao();
 
-                Optional<Boolean> isSuccess = friendDao.acceptFriend(user, friend);
+                Optional<Boolean> isSuccess = friendDao.rejectFriend(user, friend);
                 try {
-                    if (isSuccess.isPresent()) {
-                        clientHandler.response(RejectRequestFriendResponse.builder().statusCode(StatusCode.OK).build());
-                    } else
+                    if (isSuccess.isEmpty()) {
                         clientHandler.response(RejectRequestFriendResponse.builder().statusCode(StatusCode.BAD_REQUEST).build());
+                        return;
+                    }
+
+                    clientHandler.response(RejectRequestFriendResponse.builder().statusCode(StatusCode.OK).build());
                 } catch (IOException e) {
                     e.printStackTrace(System.err);
                 }
@@ -341,6 +384,7 @@ public class SocketServer {
 
                 Collection<Conservation> conservations = conservationDao.getListConservation(username);
                 System.out.println(conservations.size());
+
                 try {
                     clientHandler.response(GetListConservationResponse.builder().conservations(conservations).statusCode(StatusCode.OK).build());
                 } catch (IOException e) {
@@ -356,6 +400,7 @@ public class SocketServer {
 
                 ConservationDao conservationDao = new ConservationDao();
                 Collection<Message> messages = conservationDao.getListMessageConservation(conservationID, username);
+
                 try {
                     clientHandler.response(GetListMessageConservationResponse.builder().messages(messages).conservationID(conservationID).statusCode(StatusCode.OK).build());
                 } catch (IOException e) {
@@ -372,14 +417,14 @@ public class SocketServer {
 
                 ConservationDao conservationDao = new ConservationDao();
                 ArrayList<String> users = (ArrayList<String>) conservationDao.sentMessage(conservationID, username, message);
+
                 try {
                     clientHandler.response(SentMessageResponse.builder().conservationID(conservationID).sender(username).message(message).statusCode(StatusCode.OK).build());
-                    for (String user : users) {
 
+                    for (String user : users) {
                         ClientHandler other = getClientHandlerMap(user);
 
                         if (other != null)
-
                             other.response(SentMessageResponse.builder().conservationID(conservationID).sender(user).message(message).statusCode(StatusCode.OK).build());
                     }
                 } catch (IOException e) {
@@ -390,18 +435,20 @@ public class SocketServer {
             public void DELETE_MESSAGE_(ClientHandler clientHandler, Request request) {
                 DeleteMessageRequest req = (DeleteMessageRequest) request;
 
-                String conservatioID = req.getConservationID();
+                String conservationID = req.getConservationID();
                 String username = req.getUsername();
-                String messgeID = req.getMessageID();
+                String messageID = req.getMessageID();
 
                 ConservationDao conservationDao = new ConservationDao();
-                Optional<Boolean> isSuccess = conservationDao.deleteMessage(conservatioID, username, messgeID);
+                Optional<Boolean> isSuccess = conservationDao.deleteMessage(conservationID, username, messageID);
 
                 try {
-                    if (isSuccess.isPresent())
-                        clientHandler.response(DeleteMessageResponse.builder().statusCode(StatusCode.OK).build());
-                    else
+                    if (isSuccess.isEmpty()) {
                         clientHandler.response(DeleteMessageResponse.builder().statusCode(StatusCode.BAD_REQUEST).build());
+                        return;
+                    }
+
+                    clientHandler.response(DeleteMessageResponse.builder().statusCode(StatusCode.OK).build());
                 } catch (IOException e) {
                     e.printStackTrace(System.err);
                 }
@@ -425,10 +472,18 @@ public class SocketServer {
                 Optional<Boolean> isSuccess = conservationDao.createConservation(creator, members, true);
 
                 try {
-                    if (isSuccess.isPresent()) {
-                        clientHandler.response(CreateGroupChatResponse.builder().statusCode(StatusCode.OK).build());
-                    } else {
+                    if (isSuccess.isEmpty()) {
                         clientHandler.response(CreateGroupChatResponse.builder().statusCode(StatusCode.BAD_REQUEST).build());
+                        return;
+                    }
+
+                    clientHandler.response(CreateGroupChatResponse.builder().statusCode(StatusCode.OK).build());
+
+                    for (String member : members) {
+                        ClientHandler other = getClientHandlerMap(member);
+
+                        if (other != null)
+                            other.response(CreateGroupChatResponse.builder().statusCode(StatusCode.OK).build());
                     }
                 } catch (IOException e) {
                     e.printStackTrace(System.err);
@@ -439,16 +494,27 @@ public class SocketServer {
                 RenameGroupChatRequest req = (RenameGroupChatRequest) request;
 
                 String conservationID = req.getConservationID();
+                String username = req.getUsername();
                 String newName = req.getNewName();
 
                 ConservationDao conservationDao = new ConservationDao();
 
                 Optional<Boolean> isSuccess = conservationDao.renameConservation(conservationID, newName);
                 try {
-                    if (isSuccess.isPresent()) {
-                        clientHandler.response(RenameGroupChatResponse.builder().statusCode(StatusCode.OK).build());
-                    } else {
+                    if (isSuccess.isEmpty()) {
                         clientHandler.response(RenameGroupChatResponse.builder().statusCode(StatusCode.BAD_REQUEST).build());
+                        return;
+                    }
+
+                    clientHandler.response(RenameGroupChatResponse.builder().conservationID(conservationID).username(username).newName(newName).statusCode(StatusCode.OK).build());
+
+                    ArrayList<String> memberInGroup = (ArrayList<String>) conservationDao.sentMessage(conservationID, "system", String.format("Group chat was renamed to %s by %s", newName, username));
+                    for (String user : memberInGroup) {
+                        ClientHandler other = getClientHandlerMap(user);
+
+                        if (other != null) {
+                            clientHandler.response(RenameGroupChatResponse.builder().conservationID(conservationID).username(username).newName(newName).statusCode(StatusCode.OK).build());
+                        }
                     }
                 } catch (IOException e) {
                     e.printStackTrace(System.err);
@@ -469,15 +535,27 @@ public class SocketServer {
                     if (role.isEmpty())
                         clientHandler.response(AddMemberToGroupResponse.builder().statusCode(StatusCode.BAD_REQUEST).build());
 
+                    // Check role of adder
                     if (role.get() > 1)
                         clientHandler.response(AddMemberToGroupResponse.builder().statusCode(StatusCode.BAD_REQUEST).build());
 
                     Optional<Boolean> isSuccess = conservationDao.addMemberGroupChat(conservationID, member);
 
-                    if (isSuccess.isEmpty())
-                        clientHandler.response(AddMemberToGroupResponse.builder().conservationID(conservationID).adder(adder).member(member).statusCode(StatusCode.OK).build());
-                    else
+                    if (isSuccess.isEmpty()) {
                         clientHandler.response(AddMemberToGroupResponse.builder().statusCode(StatusCode.BAD_REQUEST).build());
+                        return;
+                    }
+
+                    clientHandler.response(AddMemberToGroupResponse.builder().conservationID(conservationID).adder(adder).member(member).statusCode(StatusCode.OK).build());
+
+                    ArrayList<String> memberInGroup = (ArrayList<String>) conservationDao.sentMessage(conservationID, "system", String.format("%s was added to group by %s", member, adder));
+                    for (String user : memberInGroup) {
+                        ClientHandler other = getClientHandlerMap(user);
+
+                        if (other != null) {
+                            other.response(AddMemberToGroupResponse.builder().conservationID(conservationID).adder(adder).member(member).statusCode(StatusCode.OK).build());
+                        }
+                    }
                 } catch (IOException e) {
                     e.printStackTrace(System.err);
                 }
@@ -492,7 +570,7 @@ public class SocketServer {
 
                 ConservationDao conservationDao = new ConservationDao();
 
-                Optional<Integer> role = conservationDao.getRoleUserConservation(conservationID, member);
+                Optional<Integer> role = conservationDao.getRoleUserConservation(conservationID, admin);
                 try {
                     if (role.isEmpty())
                         clientHandler.response(GiveAdminUserGroupChatResponse.builder().statusCode(StatusCode.BAD_REQUEST).build());
@@ -502,10 +580,21 @@ public class SocketServer {
 
                     Optional<Boolean> isSuccess = conservationDao.giveAdminUserGroupChat(conservationID, member);
 
-                    if (isSuccess.isEmpty())
-                        clientHandler.response(GiveAdminUserGroupChatResponse.builder().statusCode(StatusCode.OK).build());
-                    else
+                    if (isSuccess.isEmpty()) {
                         clientHandler.response(GiveAdminUserGroupChatResponse.builder().statusCode(StatusCode.BAD_REQUEST).build());
+                        return;
+                    }
+
+                    clientHandler.response(GiveAdminUserGroupChatResponse.builder().statusCode(StatusCode.OK).build());
+
+                    ArrayList<String> memberInGroup = (ArrayList<String>) conservationDao.sentMessage(conservationID, "system", String.format("%s was promoted to admin by %s", member, admin));
+                    for (String user : memberInGroup) {
+                        ClientHandler other = getClientHandlerMap(user);
+
+                        if (other != null) {
+                            clientHandler.response(GiveAdminUserGroupChatResponse.builder().statusCode(StatusCode.OK).build());
+                        }
+                    }
                 } catch (IOException e) {
                     e.printStackTrace(System.err);
                 }
@@ -516,7 +605,7 @@ public class SocketServer {
 
                 String conservationID = req.getConservationID();
                 String admin = req.getAdmin();
-                String memeber = req.getMember();
+                String member = req.getMember();
 
                 ConservationDao conservationDao = new ConservationDao();
 
@@ -528,12 +617,23 @@ public class SocketServer {
                     if (role.get() > 1)
                         clientHandler.response(RemoveUserGroupChatResponse.builder().statusCode(StatusCode.BAD_REQUEST).build());
 
-                    Optional<Boolean> isSuccess = conservationDao.removeUserGroupChat(conservationID, memeber);
+                    Optional<Boolean> isSuccess = conservationDao.removeUserGroupChat(conservationID, member);
 
-                    if (isSuccess.isEmpty())
-                        clientHandler.response(RemoveUserGroupChatResponse.builder().statusCode(StatusCode.OK).build());
-                    else
+                    if (isSuccess.isEmpty()) {
                         clientHandler.response(RemoveUserGroupChatResponse.builder().statusCode(StatusCode.BAD_REQUEST).build());
+                        return;
+                    }
+
+                    clientHandler.response(RemoveUserGroupChatResponse.builder().conservationId(conservationID).member(member).statusCode(StatusCode.OK).build());
+
+                    ArrayList<String> memberInGroup = (ArrayList<String>) conservationDao.sentMessage(conservationID, "system", String.format("%s was removed from group chat by %s", member, admin));
+                    for (String user : memberInGroup) {
+                        ClientHandler other = getClientHandlerMap(user);
+
+                        if (other != null) {
+                            clientHandler.response(RemoveUserGroupChatResponse.builder().conservationId(conservationID).member(member).statusCode(StatusCode.OK).build());
+                        }
+                    }
                 } catch (IOException e) {
                     e.printStackTrace(System.err);
                 }

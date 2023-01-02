@@ -24,6 +24,58 @@ public class UserDao {
         return BCrypt.checkpw(plaintext, hashPw);
     }
 
+    public Optional<Boolean> isAuthUser(String username, String plainPassword) {
+        String sql = "SELECT password " +
+                "FROM public.users " +
+                "WHERE username = ?";
+
+        return connection.flatMap(conn -> {
+            Optional<Boolean> isSuccess = Optional.empty();
+
+            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setString(1, username);
+
+                ResultSet resultSet = statement.executeQuery();
+
+                if (resultSet.next()) {
+                    String hashPassword = resultSet.getString("password");
+                    if (checkPassword(plainPassword, hashPassword))
+                        isSuccess = Optional.of(true);
+
+                }
+
+            } catch (SQLException sqlEx) {
+                sqlEx.printStackTrace(System.err);
+            }
+
+            return isSuccess;
+        });
+    }
+
+    public Optional<Boolean> isUserExists(String username) {
+        String sql = "SELECT exists(SELECT 1 FROM public.users WHERE username = ?)";
+
+        return connection.flatMap(conn -> {
+            Optional<Boolean> isExists = Optional.empty();
+
+            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setString(1, username);
+
+                ResultSet resultSet = statement.executeQuery();
+                if (resultSet.next()) {
+                    if (resultSet.getBoolean(1))
+                        isExists = Optional.of(true);
+                }
+
+
+            } catch (SQLException sqlEx) {
+                sqlEx.printStackTrace(System.err);
+            }
+
+            return isExists;
+        });
+    }
+
     public Collection<User> getInfoAll() {
         Collection<User> users = new ArrayList<>();
         String sql = "SELECT username, full_name, address, date_of_birth, gender, email, is_online, is_activated " +
@@ -94,6 +146,29 @@ public class UserDao {
         });
     }
 
+    public Optional<Boolean> updateUserOnline(String username, Boolean isUserOnline) {
+        String sql = "UPDATE public.users SET is_online = ? WHERE username = ?";
+
+        return connection.flatMap(conn -> {
+            Optional<Boolean> isSuccess = Optional.empty();
+
+            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setBoolean(1, isUserOnline);
+                statement.setString(2, username);
+
+                int numberOfUpdateRows = statement.executeUpdate();
+
+                if (numberOfUpdateRows > 0)
+                    isSuccess = Optional.of(true);
+
+            } catch (SQLException sqlEx) {
+                sqlEx.printStackTrace(System.err);
+            }
+
+            return isSuccess;
+        });
+    }
+
     public void update(User user) {
         String sql = "UPDATE public.users " +
                 "SET full_name = ?, address = ?, date_of_birth = ?, gender = ?, email = ?, is_online = ?, is_activated = ? " +
@@ -128,34 +203,6 @@ public class UserDao {
             } catch (SQLException sqlEx) {
                 sqlEx.printStackTrace(System.err);
             }
-        });
-    }
-
-    public Optional<Boolean> isAuthUser(String username, String plainPassword) {
-        String sql = "SELECT password " +
-                "FROM public.users " +
-                "WHERE username = ?";
-
-        return connection.flatMap(conn -> {
-            Optional<Boolean> isSuccess = Optional.empty();
-
-            try (PreparedStatement statement = conn.prepareStatement(sql)) {
-                statement.setString(1, username);
-
-                ResultSet resultSet = statement.executeQuery();
-
-                if (resultSet.next()) {
-                    String hashPassword = resultSet.getString("password");
-                    if (checkPassword(plainPassword, hashPassword))
-                        isSuccess = Optional.of(true);
-
-                }
-
-            } catch (SQLException sqlEx) {
-                sqlEx.printStackTrace(System.err);
-            }
-
-            return isSuccess;
         });
     }
 }

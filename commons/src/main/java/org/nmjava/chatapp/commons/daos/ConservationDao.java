@@ -35,7 +35,7 @@ public class ConservationDao {
                     String last_message = resultSet.getString("last_message");
                     Boolean is_Group = resultSet.getBoolean("is_group");
 
-                    conservations.add(new Conservation(conservationID, name, last_message,is_Group));
+                    conservations.add(new Conservation(conservationID, name, last_message, is_Group));
                 }
             } catch (SQLException e) {
                 e.printStackTrace(System.err);
@@ -45,93 +45,23 @@ public class ConservationDao {
         return conservations;
     }
 
-    public Collection<String> sentMessage(String conservationID, String username, String message) {
-        Collection<String> user = new ArrayList<>();
-
-        String insertMessage = "INSERT INTO public.messages (message_id, sender_username, conservation_id, create_at, message)  " + "VALUES (?, ?, ?, ?, ?)";
-
-        String updateConservation = "UPDATE public.conservation_update " + "SET last_message = ?, last_sender = ?, last_update = ? " + "WHERE conservation_id = ?";
-
-        String getMemberInConservation = "SELECT username " + "FROM public.conservation_user " + "WHERE conservation_id = ? and username != ?";
-
-        connection.ifPresent(conn -> {
-            try {
-                LocalDateTime createAt = LocalDateTime.now();
-
-                PreparedStatement insertMessageStatement = conn.prepareStatement(insertMessage);
-                insertMessageStatement.setString(1, genID().toString());
-                insertMessageStatement.setString(2, username);
-                insertMessageStatement.setString(3, conservationID);
-                insertMessageStatement.setTimestamp(4, Timestamp.valueOf(createAt));
-                insertMessageStatement.setString(5, message);
-
-                int numberOfRow = insertMessageStatement.executeUpdate();
-
-                PreparedStatement updateConservationStatement = conn.prepareStatement(updateConservation);
-                updateConservationStatement.setString(1, message);
-                updateConservationStatement.setString(2, username);
-                updateConservationStatement.setTimestamp(3, Timestamp.valueOf(createAt));
-                updateConservationStatement.setString(4, conservationID);
-
-                numberOfRow = updateConservationStatement.executeUpdate();
-
-                PreparedStatement getMemberInConservationStatement = conn.prepareStatement(getMemberInConservation);
-                getMemberInConservationStatement.setString(1, conservationID);
-                getMemberInConservationStatement.setString(2, username);
-
-                ResultSet resultSet = getMemberInConservationStatement.executeQuery();
-                while (resultSet.next()) {
-                    user.add(resultSet.getString(1));
-                }
-            } catch (SQLException e) {
-                e.printStackTrace(System.err);
-            }
-        });
-
-
-        return user;
-    }
-
-    public Optional<Boolean> deleteMessage(String conservationID, String username, String messageID) {
-        String sql = "INSERT INTO public.message_hide (conservation_id, username, message_id) " + "VALUES (?, ?, ?)";
-
-        return connection.flatMap(conn -> {
-            Optional<Boolean> isSuccess = Optional.empty();
-
-            try (PreparedStatement statement = conn.prepareStatement(sql)) {
-                statement.setString(1, conservationID);
-                statement.setString(2, username);
-                statement.setString(3, messageID);
-
-                int numberOfRowUpdate = statement.executeUpdate();
-
-                if (numberOfRowUpdate > 0) isSuccess = Optional.of(true);
-            } catch (SQLException e) {
-                e.printStackTrace(System.err);
-            }
-
-            return isSuccess;
-        });
-    }
-
     public Collection<Message> getListMessageConservation(String conservationId, String username) {
         Collection<Message> messages = new ArrayList<>();
 
-        String sql = "SELECT message_id, sender_username, message " + "FROM public.messages join public.conservations on messages.conservation_id = conservations.conservation_id " + "WHERE messages.conservation_id = ? " + "ORDER BY created_at DESC " + "EXCEPT " + "SELECT message_id " + "FROM public.message_hide " + "WHERE conservation_id = ? and username = ?";
-        String sql_ = "SELECT message_id, sender_username,create_at, message FROM public.messages join public.conservations on messages.conservation_id = conservations.conservation_id WHERE messages.message_id IN\n" +
-                "(SELECT message_id\n" +
-                "   FROM public.messages\n" +
-                "   WHERE messages.conservation_id = ? \n" +
-                "   EXCEPT\n" +
-                "   SELECT message_id\n" +
-                "   FROM public.message_hide\n" +
-                "   WHERE conservation_id = ? and username = ? )\n" +
-                "GROUP BY message_id ,created_at\n" +
-                "ORDER BY created_at ASC";
+        String sql =
+                "SELECT mes.message_id, mes.sender_username, mes.create_at, mes.message " +
+                        "FROM public.messages mes " +
+                        "JOIN public.conservations con ON mes.conservation_id = con.conservation_id " +
+                        "WHERE mes.conservation_id = ? " +
+                        "AND mes.message_id NOT IN (SELECT message_id " +
+                        "FROM public.message_hide " +
+                        "WHERE conservation_id = ? AND username = ?)" +
+                        "ORDER BY mes.create_at DESC";
+
         connection.ifPresent(conn -> {
             Optional<Boolean> isSuccess = Optional.empty();
 
-            try (PreparedStatement statement = conn.prepareStatement(sql_)) {
+            try (PreparedStatement statement = conn.prepareStatement(sql)) {
                 statement.setString(1, conservationId);
                 statement.setString(2, conservationId);
                 statement.setString(3, username);
@@ -143,7 +73,7 @@ public class ConservationDao {
                     String message = resultSet.getString("message");
                     String create_at = resultSet.getString("create_at");
 
-                    messages.add(new Message(messageID, sender, conservationId,create_at, message));
+                    messages.add(new Message(messageID, sender, conservationId, create_at, message));
                 }
             } catch (SQLException e) {
                 e.printStackTrace(System.err);
@@ -156,7 +86,6 @@ public class ConservationDao {
 
     public Optional<Boolean> createConservation(String creatorName, List<String> users, Boolean isGroup) {
         String createConservationSQL = "INSERT INTO public.conservations (conservation_id, creator_username, name, created_at, is_group) " + "VALUES (?, ?, ?, ?, ?) " + "RETURNING conservation_id";
-
         String addUserToConservationSQL = "INSERT INTO public.conservation_user (conservation_id, username, role) " + "VALUES(?, ?, ?) " + "RETURNING conservation_id";
         String addUpdateToConservationSQL = "INSERT INTO public.conservation_update (conservation_id, last_message, last_sender, last_update) " + "VALUES(?,null,null,now()) " + "RETURNING conservation_id";
 
@@ -169,11 +98,10 @@ public class ConservationDao {
                 PreparedStatement createConservationStatement = conn.prepareStatement(createConservationSQL, Statement.RETURN_GENERATED_KEYS);
                 createConservationStatement.setString(1, genID().toString());
                 createConservationStatement.setString(2, creatorName);
-                if(users.size()>1){
-                    createConservationStatement.setString(3, new String(creatorName+" "  + users.get(0)+" " + users.get(1)));
-                }
-                else{
-                    createConservationStatement.setString(3, new String(creatorName +" " + users.get(0)));
+                if (users.size() > 1) {
+                    createConservationStatement.setString(3, new String(creatorName + " " + users.get(0) + " " + users.get(1)));
+                } else {
+                    createConservationStatement.setString(3, new String(creatorName + " " + users.get(0)));
                 }
                 createConservationStatement.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
                 createConservationStatement.setBoolean(5, isGroup);
@@ -220,6 +148,98 @@ public class ConservationDao {
 
             } catch (SQLException sqlEx) {
                 sqlEx.printStackTrace(System.err);
+            }
+
+            return isSuccess;
+        });
+    }
+
+    public Collection<String> getMemberExceptRequester(String conservationID, String requester) {
+        Collection<String> users = new ArrayList<>();
+
+        String sql = "SELECT username " + "FROM public.conservation_user " + "WHERE conservation_id = ? and username != ?";
+
+        connection.ifPresent(conn -> {
+            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setString(1, conservationID);
+                statement.setString(2, requester);
+
+                ResultSet resultSet = statement.executeQuery();
+
+                if (resultSet.next()) {
+                    users.add(resultSet.getString(1));
+                }
+            } catch (SQLException sqlEx) {
+                sqlEx.printStackTrace(System.err);
+            }
+        });
+
+        return users;
+    }
+
+    public Collection<String> sentMessage(String conservationID, String username, String message) {
+        Collection<String> users = new ArrayList<>();
+
+        String insertMessage = "INSERT INTO public.messages (message_id, sender_username, conservation_id, create_at, message)  " + "VALUES (?, ?, ?, ?, ?)";
+
+        String updateConservation = "UPDATE public.conservation_update " + "SET last_message = ?, last_sender = ?, last_update = ? " + "WHERE conservation_id = ?";
+
+        String getMemberInConservation = "SELECT username " + "FROM public.conservation_user " + "WHERE conservation_id = ? and username != ?";
+
+        connection.ifPresent(conn -> {
+            try {
+                LocalDateTime createAt = LocalDateTime.now();
+
+                PreparedStatement insertMessageStatement = conn.prepareStatement(insertMessage);
+                insertMessageStatement.setString(1, genID().toString());
+                insertMessageStatement.setString(2, username);
+                insertMessageStatement.setString(3, conservationID);
+                insertMessageStatement.setTimestamp(4, Timestamp.valueOf(createAt));
+                insertMessageStatement.setString(5, message);
+
+                int numberOfRow = insertMessageStatement.executeUpdate();
+
+                PreparedStatement updateConservationStatement = conn.prepareStatement(updateConservation);
+                updateConservationStatement.setString(1, message);
+                updateConservationStatement.setString(2, username);
+                updateConservationStatement.setTimestamp(3, Timestamp.valueOf(createAt));
+                updateConservationStatement.setString(4, conservationID);
+
+                numberOfRow = updateConservationStatement.executeUpdate();
+
+                PreparedStatement getMemberInConservationStatement = conn.prepareStatement(getMemberInConservation);
+                getMemberInConservationStatement.setString(1, conservationID);
+                getMemberInConservationStatement.setString(2, username);
+
+                ResultSet resultSet = getMemberInConservationStatement.executeQuery();
+                while (resultSet.next()) {
+                    users.add(resultSet.getString(1));
+                }
+            } catch (SQLException e) {
+                e.printStackTrace(System.err);
+            }
+        });
+
+
+        return users;
+    }
+
+    public Optional<Boolean> deleteMessage(String conservationID, String username, String messageID) {
+        String sql = "INSERT INTO public.message_hide (conservation_id, username, message_id) " + "VALUES (?, ?, ?)";
+
+        return connection.flatMap(conn -> {
+            Optional<Boolean> isSuccess = Optional.empty();
+
+            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setString(1, conservationID);
+                statement.setString(2, username);
+                statement.setString(3, messageID);
+
+                int numberOfRowUpdate = statement.executeUpdate();
+
+                if (numberOfRowUpdate > 0) isSuccess = Optional.of(true);
+            } catch (SQLException e) {
+                e.printStackTrace(System.err);
             }
 
             return isSuccess;
