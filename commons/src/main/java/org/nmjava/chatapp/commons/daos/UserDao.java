@@ -1,9 +1,11 @@
 package org.nmjava.chatapp.commons.daos;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.mindrot.jbcrypt.BCrypt;
 import org.nmjava.chatapp.commons.models.User;
 import org.nmjava.chatapp.commons.utils.ConnectDB;
 
+import java.security.SecureRandom;
 import java.sql.Date;
 import java.sql.*;
 import java.time.LocalDate;
@@ -24,31 +26,74 @@ public class UserDao {
         return BCrypt.checkpw(plaintext, hashPw);
     }
 
+    private String generatedPassword(int length) {
+        char[] possibleCharacters = ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~!@#$%^&*()-_=+[{]}|;:,<.>?").toCharArray();
+        return RandomStringUtils.random(length, 0, possibleCharacters.length - 1, false, false, possibleCharacters, new SecureRandom());
+    }
+
     public Optional<Boolean> isAuthUser(String username, String plainPassword) {
-        String sql = "SELECT password " +
+        String getPassword = "SELECT password " +
                 "FROM public.users " +
                 "WHERE username = ?";
+
+        String logUserLogin = "INSERT INTO public.login_logs (username, login_at) VALUES (?, now())";
 
         return connection.flatMap(conn -> {
             Optional<Boolean> isSuccess = Optional.empty();
 
-            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            try (PreparedStatement statement = conn.prepareStatement(getPassword)) {
                 statement.setString(1, username);
 
                 ResultSet resultSet = statement.executeQuery();
 
                 if (resultSet.next()) {
                     String hashPassword = resultSet.getString("password");
-                    if (checkPassword(plainPassword, hashPassword))
-                        isSuccess = Optional.of(true);
+                    if (checkPassword(plainPassword, hashPassword)) {
+                        PreparedStatement logUserLoginStatement = conn.prepareStatement(logUserLogin);
+                        logUserLoginStatement.setString(1, username);
 
+                        int rowInsert = logUserLoginStatement.executeUpdate();
+
+                        if (rowInsert > 0)
+                            isSuccess = Optional.of(true);
+
+                        logUserLoginStatement.close();
+                    }
+
+                }
+
+                resultSet.close();
+            } catch (SQLException sqlEx) {
+                sqlEx.printStackTrace(System.err);
+            }
+
+            return isSuccess;
+        });
+    }
+
+    public Optional<String> resetPassword(String email) {
+        String newPassword = generatedPassword(6);
+
+        String sql = "UPDATE public.users SET password = ? WHERE email = ?";
+
+        return connection.flatMap(conn -> {
+            Optional<String> rtnPassword = Optional.empty();
+
+            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setString(1, newPassword);
+                statement.setString(2, email);
+
+                int rowOfUpdate = statement.executeUpdate();
+
+                if (rowOfUpdate > 0) {
+                    rtnPassword = Optional.of(newPassword);
                 }
 
             } catch (SQLException sqlEx) {
                 sqlEx.printStackTrace(System.err);
             }
 
-            return isSuccess;
+            return rtnPassword;
         });
     }
 

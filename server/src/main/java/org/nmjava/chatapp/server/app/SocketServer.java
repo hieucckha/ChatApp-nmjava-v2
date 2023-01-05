@@ -14,11 +14,10 @@ import org.nmjava.chatapp.commons.models.Message;
 import org.nmjava.chatapp.commons.models.User;
 import org.nmjava.chatapp.commons.requests.*;
 import org.nmjava.chatapp.commons.responses.*;
+import org.nmjava.chatapp.server.services.SendMailService;
 
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import javax.mail.MessagingException;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.time.LocalDate;
@@ -219,7 +218,30 @@ public class SocketServer {
             }
 
             public void FORGOT_PASSWORD_(ClientHandler clientHandler, Request request) {
+                ForgotPasswordRequest req = (ForgotPasswordRequest) request;
 
+                String email = req.getEmail();
+
+                UserDao userDao = new UserDao();
+                Optional<String> newPassword = userDao.resetPassword(email);
+
+                try {
+                    if (newPassword.isEmpty()) {
+                        clientHandler.response(ForgotPasswordResponse.builder().statusCode(StatusCode.BAD_REQUEST).build());
+                        return;
+                    }
+
+                    Boolean isSuccess = SendMailService.sendMail(email, "Reset pasword", "You new password is: " + newPassword);
+
+                    if (!isSuccess) {
+                        clientHandler.response(ForgotPasswordResponse.builder().statusCode(StatusCode.BAD_REQUEST).build());
+                        return;
+                    }
+
+                    clientHandler.response(ForgotPasswordResponse.builder().statusCode(StatusCode.OK).build());
+                } catch (MessagingException | IOException e) {
+                    e.printStackTrace(System.err);
+                }
             }
 
             public void CHECK_USER_EXIST_(ClientHandler clientHandler, Request request) {
@@ -532,7 +554,7 @@ public class SocketServer {
                         if (other != null) {
                             System.out.println(user);
                             other.response(RenameGroupChatResponse.builder().conservationID(conservationID).username(username).newName(newName).statusCode(StatusCode.OK).build());
-                            System.out.println("Gui "+user );
+                            System.out.println("Gui " + user);
                         }
                     }
                 } catch (IOException e) {
