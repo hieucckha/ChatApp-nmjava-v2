@@ -231,6 +231,15 @@ public class AdminHomeController implements Initializable {
     {
         System.out.println(tableView.getSelectionModel().getSelectedItem());
         User user= tableView.getSelectionModel().getSelectedItem() ;
+        if(user==null)
+        {
+            Alert fail = new Alert(Alert.AlertType.INFORMATION);
+            fail.setHeaderText("failure");
+            fail.setContentText("you must choose account");
+            fail.showAndWait();
+        }
+        else {
+
         user.setPassword("1234");
 
         UserDao userDao= new UserDao();
@@ -240,6 +249,8 @@ public class AdminHomeController implements Initializable {
         alert.setHeaderText("Success");
         alert.setContentText("Account succesfully created!");
         alert.showAndWait();
+        }
+
 
     }
     @FXML
@@ -247,6 +258,15 @@ public class AdminHomeController implements Initializable {
     {
 
         User user= tableView.getSelectionModel().getSelectedItem() ;
+        if(user==null)
+        {
+            Alert fail = new Alert(Alert.AlertType.INFORMATION);
+            fail.setHeaderText("failure");
+            fail.setContentText("you must choose account");
+            fail.showAndWait();
+        }
+        else{
+
         UserDao userDao= new UserDao();
         userDao.delete(user.getUsername());
 
@@ -254,6 +274,7 @@ public class AdminHomeController implements Initializable {
         alert.setHeaderText("Success");
         alert.setContentText("Account succesfully created!");
         alert.showAndWait();
+        }
 
 //        tableView.getItems().clear();
         tableView.setItems(FXCollections.observableArrayList(new UserDao().getInfoAll()));
