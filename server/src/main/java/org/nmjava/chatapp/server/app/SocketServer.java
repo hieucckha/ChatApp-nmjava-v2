@@ -138,6 +138,7 @@ public class SocketServer {
             commands.put(RequestType.GET_LIST_FRIEND, requestHandler::GET_LIST_FRIEND_);
             commands.put(RequestType.GET_LIST_FRIEND_ONLINE, requestHandler::GET_LIST_FRIEND_ONLINE_);
             commands.put(RequestType.GET_LIST_REQUEST_FRIEND, requestHandler::GET_LIST_REQUEST_FRIEND_);
+            commands.put(RequestType.UNFRIEND, requestHandler::UNFRIEND_);
             commands.put(RequestType.ADD_FRIEND, requestHandler::ADD_FRIEND_);
             commands.put(RequestType.ACCEPT_REQUEST_FRIEND, requestHandler::ACCEPT_REQUEST_FRIEND_);
             commands.put(RequestType.REJECT_REQUEST_FRIEND, requestHandler::REJECT_REQUEST_FRIEND_);
@@ -146,7 +147,7 @@ public class SocketServer {
             commands.put(RequestType.GET_LIST_MESSAGE_CONSERVATION, requestHandler::GET_LIST_MESSAGE_CONSERVATION_);
             commands.put(RequestType.SEND_MESSAGE, requestHandler::SEND_MESSAGE_);
             commands.put(RequestType.DELETE_MESSAGE, requestHandler::DELETE_MESSAGE_);
-            commands.put(RequestType.SEARCH_MESSAGE_USER, requestHandler::SEARCH_MESSAGE_USER_);
+            commands.put(RequestType.SEARCH_MESSAGE_CONSERVATION, requestHandler::SEARCH_MESSAGE_CONSERVATION_);
             commands.put(RequestType.SEARCH_MESSAGE_ALL, requestHandler::SEARCH_MESSAGE_ALL_);
 
             commands.put(RequestType.CREATE_GROUP_CHAT, requestHandler::CREATE_GROUP_CHAT_);
@@ -315,6 +316,33 @@ public class SocketServer {
                 }
             }
 
+            public void UNFRIEND_(ClientHandler clientHandler, Request request) {
+                UnfriendRequest req = (UnfriendRequest) request;
+
+                String user = req.getUser();
+                String friend = req.getFriend();
+
+                FriendDao friendDao = new FriendDao();
+
+                Optional<Boolean> isSuccess = friendDao.unfriend(user, friend);
+
+                try {
+                    if (isSuccess.isEmpty()) {
+                        clientHandler.response(UnfriendResponse.builder().statusCode(StatusCode.BAD_REQUEST).build());
+                        return;
+                    }
+
+                    clientHandler.response(UnfriendResponse.builder().statusCode(StatusCode.OK).build());
+
+                    ClientHandler other = getClientHandlerMap(friend);
+                    if (other != null) {
+                        other.response(UnfriendResponse.builder().user(user).friend(friend).statusCode(StatusCode.OK).build());
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace(System.err);
+                }
+            }
+
             public void ADD_FRIEND_(ClientHandler clientHandler, Request request) {
                 AddFriendRequest req = (AddFriendRequest) request;
 
@@ -478,12 +506,35 @@ public class SocketServer {
                 }
             }
 
-            public void SEARCH_MESSAGE_USER_(ClientHandler clientHandler, Request request) {
+            public void SEARCH_MESSAGE_CONSERVATION_(ClientHandler clientHandler, Request request) {
+                SearchMessageConservationRequest req = (SearchMessageConservationRequest) request;
 
+                String conservationID = req.getConservationID();
+                String text = req.getText();
+
+                ConservationDao conservationDao = new ConservationDao();
+                Collection<Message> messages = conservationDao.searchMessageInConservation(conservationID, text);
+
+                try {
+                    clientHandler.response(SearchMessageConservationResponse.builder().messages(messages).statusCode(StatusCode.OK).build());
+                } catch (IOException e) {
+                    e.printStackTrace(System.err);
+                }
             }
 
             public void SEARCH_MESSAGE_ALL_(ClientHandler clientHandler, Request request) {
+                SearchMessageAllRequest req = (SearchMessageAllRequest) request;
 
+                String text = req.getText();
+
+                ConservationDao conservationDao = new ConservationDao();
+                Collection<Message> messages = conservationDao.searchAllMessage(text);
+
+                try {
+                    clientHandler.response(SearchMessageAllResponse.builder().messages(messages).statusCode(StatusCode.OK).build());
+                } catch (IOException e) {
+                    e.printStackTrace(System.err);
+                }
             }
 
             public void CREATE_GROUP_CHAT_(ClientHandler clientHandler, Request request) {

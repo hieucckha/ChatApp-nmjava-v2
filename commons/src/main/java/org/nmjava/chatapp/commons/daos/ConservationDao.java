@@ -267,6 +267,64 @@ public class ConservationDao {
         });
     }
 
+    public Collection<Message> searchMessageInConservation(String conservationID, String text) {
+        Collection<Message> messages = new ArrayList<>();
+
+        String sql = "SELECT message_id, sender_username, conservation_id, create_at, message FROM messages WHERE conservation_id = ? AND LOWER(message) LIKE ?";
+
+        connection.ifPresent(conn -> {
+            Optional<Boolean> isSuccess = Optional.empty();
+
+            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setString(1, conservationID);
+                statement.setString(2, "%" + text.toLowerCase() + "%");
+
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+                    String messageID = resultSet.getString("message_id");
+                    String sender = resultSet.getString("sender_username");
+                    String create_at = resultSet.getString("create_at");
+                    String message = resultSet.getString("message");
+
+                    messages.add(new Message(messageID, sender, conservationID, create_at, message));
+                }
+            } catch (SQLException e) {
+                e.printStackTrace(System.err);
+            }
+        });
+
+        return messages;
+    }
+
+    public Collection<Message> searchAllMessage(String text) {
+        Collection<Message> messages = new ArrayList<>();
+
+        String sql = "SELECT message_id, sender_username, conservation_id, create_at, message FROM messages WHERE LOWER(message) LIKE ?";
+
+        connection.ifPresent(conn -> {
+            Optional<Boolean> isSuccess = Optional.empty();
+
+            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setString(1, "%" + text.toLowerCase() + "%");
+
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+                    String messageID = resultSet.getString("message_id");
+                    String sender = resultSet.getString("sender_username");
+                    String conservationID = resultSet.getString("conservation_id");
+                    String create_at = resultSet.getString("create_at");
+                    String message = resultSet.getString("message");
+
+                    messages.add(new Message(messageID, sender, conservationID, create_at, message));
+                }
+            } catch (SQLException e) {
+                e.printStackTrace(System.err);
+            }
+        });
+
+        return messages;
+    }
+
     public Optional<Boolean> renameConservation(String conservationID, String newName) {
         String sql = "UPDATE public.conservations " + "SET name = ? " + "WHERE conservation_id = ?";
 

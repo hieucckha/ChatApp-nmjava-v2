@@ -103,6 +103,27 @@ public class FriendDao {
         return friends;
     }
 
+    public Optional<Boolean> unfriend(String user, String friend) {
+        String sql = "DELETE FROM public.friends WHERE user_username = ? AND friend_username = ?";
+
+        return connection.flatMap(conn -> {
+            Optional<Boolean> isSuccess = Optional.empty();
+
+            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setString(1, user);
+                statement.setString(2, friend);
+
+                int numberRowDelete = statement.executeUpdate();
+
+                if (numberRowDelete > 0) isSuccess = Optional.of(true);
+            } catch (SQLException e) {
+                e.printStackTrace(System.err);
+            }
+
+            return isSuccess;
+        });
+    }
+
     public Optional<Boolean> addFriend(String user, String friend) {
         String sql = "INSERT INTO public.friends (user_username, friend_username, created_at, is_friend) " +
                 "VALUES (?, ?, now(), false)";
