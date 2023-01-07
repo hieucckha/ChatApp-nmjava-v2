@@ -116,14 +116,17 @@ public class UserDao {
             }
         });
     }
+
     public void resetPassword(User user) {
         String sql = "UPDATE public.users " +
-                "SET password=? " +
+                "SET password = ? " +
                 "WHERE username = ?";
 
         connection.ifPresent(conn -> {
+            String hashPassword = hashPassword(user.getPassword());
+            ;
             try (PreparedStatement statement = conn.prepareStatement(sql)) {
-                statement.setString(1, user.getPassword());
+                statement.setString(1, hashPassword);
                 statement.setString(2, user.getUsername());
 
                 int numberOfDeletedRows = statement.executeUpdate();

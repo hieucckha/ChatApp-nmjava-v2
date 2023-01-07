@@ -1,23 +1,17 @@
 package org.nmjava.chatapp.client.controllers;
 
-import javafx.beans.Observable;
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -33,7 +27,6 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.EventListener;
 import java.util.ResourceBundle;
 
 public class AdminHomeController implements Initializable {
@@ -166,23 +159,18 @@ public class AdminHomeController implements Initializable {
         System.out.println("true");
 
     }
+
     @FXML
-    public void clickItem()
-    {
+    public void clickItem() {
 
-            UserDao userDao = new UserDao();
-            User user=tableView.getSelectionModel().getSelectedItem();
-            if(user.getActivated()==true)
-            {
-                user.setActivated(false);
-            }
-            else
-            {
-                user.setActivated(true);
-            }
-            userDao.update(user);
-
-
+        UserDao userDao = new UserDao();
+        User user = tableView.getSelectionModel().getSelectedItem();
+        if (user.getActivated() == true) {
+            user.setActivated(false);
+        } else {
+            user.setActivated(true);
+        }
+        userDao.update(user);
 
 
         tableView.setItems(FXCollections.observableArrayList(new UserDao().getInfoAll()));
@@ -221,65 +209,60 @@ public class AdminHomeController implements Initializable {
             alert.showAndWait();
         }
 
-        tableView.getItems().clear();
+//        tableView.getItems().clear();
         tableView.setItems(FXCollections.observableArrayList(new UserDao().getInfoAll()));
     }
 
 
     @FXML
-    private void resetUserInTable(ActionEvent event)
-    {
+    private void resetUserInTable(ActionEvent event) {
         System.out.println(tableView.getSelectionModel().getSelectedItem());
-        User user= tableView.getSelectionModel().getSelectedItem() ;
-        if(user==null)
-        {
+        User user = tableView.getSelectionModel().getSelectedItem();
+        if (user == null) {
             Alert fail = new Alert(Alert.AlertType.INFORMATION);
             fail.setHeaderText("failure");
             fail.setContentText("you must choose account");
             fail.showAndWait();
-        }
-        else {
+        } else {
+            user.setPassword("1234");
 
-        user.setPassword("1234");
+            UserDao userDao = new UserDao();
+            userDao.resetPassword(user);
 
-        UserDao userDao= new UserDao();
-        userDao.resetPassword(user);
-
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setHeaderText("Success");
-        alert.setContentText("Account succesfully created!");
-        alert.showAndWait();
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText("Success");
+            alert.setContentText("Account succesfully created!");
+            alert.showAndWait();
         }
 
 
     }
-    @FXML
-    private void deleteUserInTable(ActionEvent event)
-    {
 
-        User user= tableView.getSelectionModel().getSelectedItem() ;
-        if(user==null)
-        {
+    @FXML
+    private void deleteUserInTable(ActionEvent event) {
+
+        User user = tableView.getSelectionModel().getSelectedItem();
+        if (user == null) {
             Alert fail = new Alert(Alert.AlertType.INFORMATION);
             fail.setHeaderText("failure");
             fail.setContentText("you must choose account");
             fail.showAndWait();
-        }
-        else{
+        } else {
 
-        UserDao userDao= new UserDao();
-        userDao.delete(user.getUsername());
+            UserDao userDao = new UserDao();
+            userDao.delete(user.getUsername());
 
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setHeaderText("Success");
-        alert.setContentText("Account succesfully created!");
-        alert.showAndWait();
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText("Success");
+            alert.setContentText("Account succesfully created!");
+            alert.showAndWait();
         }
 
 //        tableView.getItems().clear();
         tableView.setItems(FXCollections.observableArrayList(new UserDao().getInfoAll()));
 
     }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         tableView.setEditable(true);
@@ -306,7 +289,6 @@ public class AdminHomeController implements Initializable {
         addressTable.setOnEditCommit(event -> {
             User user = event.getRowValue();
             user.setAddress(event.getNewValue());
-
 
 
             UserDao userDao = new UserDao();
@@ -367,23 +349,21 @@ public class AdminHomeController implements Initializable {
         tableView.setItems(observableList);
 
         //search list
-        FilteredList<User> filteredList= new FilteredList<>(observableList,b->true);
-        filterUserName.textProperty().addListener((observable,oldValue,newValue)-> {
-            filteredList.setPredicate(User->{
-                if(newValue.isBlank()||newValue.isEmpty()||newValue==null)
-                {
-                     return true;
-                }
-                String searchKeyWord= newValue.toLowerCase();
-                if(User.getUsername().toLowerCase().indexOf(searchKeyWord)>-1)
-                {
+        FilteredList<User> filteredList = new FilteredList<>(observableList, b -> true);
+        filterUserName.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredList.setPredicate(User -> {
+                if (newValue.isBlank() || newValue.isEmpty() || newValue == null) {
                     return true;
-                }else
+                }
+                String searchKeyWord = newValue.toLowerCase();
+                if (User.getUsername().toLowerCase().indexOf(searchKeyWord) > -1) {
+                    return true;
+                } else
                     return false;
             });
         });
 
-        SortedList<User> sortedList= new SortedList<>(filteredList);
+        SortedList<User> sortedList = new SortedList<>(filteredList);
         sortedList.comparatorProperty().bind(tableView.comparatorProperty());
         tableView.setItems(sortedList);
     }
