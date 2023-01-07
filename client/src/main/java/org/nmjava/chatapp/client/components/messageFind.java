@@ -7,18 +7,20 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import org.nmjava.chatapp.client.Main;
+import org.nmjava.chatapp.client.controllers.UserHomeController;
 import org.nmjava.chatapp.commons.models.Message;
 import org.nmjava.chatapp.commons.requests.DeleteMessageRequest;
+import org.nmjava.chatapp.commons.requests.GetListMessageConservationRequest;
+import org.nmjava.chatapp.commons.requests.SearchMessageAllRequest;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class conservationLine extends HBox implements Initializable {
+public class messageFind extends HBox implements Initializable {
 
     @FXML
     private Label message;
@@ -29,12 +31,9 @@ public class conservationLine extends HBox implements Initializable {
 
     private Button deletemsg;
 
-    public conservationLine(Message msg, Boolean type) {
+    public messageFind(Message msg, Boolean type) {
         loadFXML();
-        deletemsg= new Button("X");
-        deletemsg.setOnMouseClicked(e -> {
-            Main.socketClient.addRequestToQueue(DeleteMessageRequest.builder().conservationID(msg.getConservationID()).messageID(msg.getMessageID()).username(Main.UserName).build());
-        });
+
         this.message.setText(msg.getMessage());
         this.message.setPadding(new Insets(5,5,5,5));
         this.message.setWrapText(true);
@@ -53,11 +52,16 @@ public class conservationLine extends HBox implements Initializable {
             this.setAlignment(Pos.CENTER_RIGHT);
 //            this.messageBox.getStyleClass().set(0,"send");
         }
-        messageInfor.getChildren().add(deletemsg);
+        this.setOnMouseClicked(e -> {
+            UserHomeController.utc.setUserName(msg.getSender());
+            UserHomeController.conservationID = msg.getConservationID();
+            Main.socketClient.addRequestToQueue(GetListMessageConservationRequest.builder().username(Main.UserName).conservationID(msg.getConservationID()).build());
+//            Main.socketClient.addRequestToQueue(GetListMessageConservationRequest.builder().username(Main.UserName).conservationID(msg.getConservationID()).build());
+        });
     }
 
     public void loadFXML() {
-        URL url = Avatar.class.getResource("conservationLine.fxml");
+        URL url = Avatar.class.getResource("messageFind.fxml");
 
         FXMLLoader loader = new FXMLLoader(url);
         loader.setRoot(this);

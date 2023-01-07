@@ -32,20 +32,37 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-                <TextField prefHeight="35.0" prefWidth="240.0" style="-fx-background-color: grey; -fx-background-radius: 20;">
-                    <GridPane.margin>
-                        <Insets left="5.0" right="5.0" />
-                    </GridPane.margin>
-                </TextField>
                 <Button fx:id="addFrdBtn" minWidth="41.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="81.0" style="-fx-background-color: transparent;" text="Thêm bạn" textFill="#2c2b2b" GridPane.columnIndex="1">
                     <GridPane.margin>
                         <Insets left="2.0" right="2.0" />
                     </GridPane.margin>
                 </Button>
                 <Button fx:id="createGroupbtn" minWidth="41.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="76.0" style="-fx-background-color: transparent;" text="Tao nhóm" textFill="#2c2b2b" GridPane.columnIndex="2" />
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+               <children>
+                      <TextField fx:id="searchAll" prefHeight="35.0" prefWidth="240.0" style="-fx-background-color: grey; -fx-background-radius: 20;" text="Search text in all conservation" HBox.hgrow="ALWAYS" />
+                  <Button fx:id="searchAllBtn" mnemonicParsing="false">
+                     <graphic>
+                        <FontIcon iconLiteral="mdmz-search" iconSize="20" />
+                     </graphic>
+                  </Button>
+               </children>
+            </HBox>
             </children>
         </GridPane>
-        <HBox fx:id="titleChatContainer" alignment="CENTER_LEFT" minWidth="300.0" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" />
+        <HBox fx:id="titleChatContainer" alignment="CENTER_LEFT" minWidth="300.0" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1">
+         <children>
+            <HBox fx:id="settingConservation" alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <TextField fx:id="search" prefHeight="35.0" prefWidth="240.0" style="-fx-background-color: white; -fx-background-radius: 20;" text="Search message in current conservation" />
+               </children>
+            </HBox>
+            <Button fx:id="searchBtn" mnemonicParsing="false">
+               <graphic>
+                  <FontIcon iconLiteral="mdmz-search" iconSize="20" />
+               </graphic>
+            </Button>
+         </children></HBox>
         <GridPane fx:id="listInfoContainer" gridLinesVisible="true" GridPane.rowIndex="1">
             <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />

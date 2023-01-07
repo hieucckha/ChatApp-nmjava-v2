@@ -95,6 +95,7 @@ public class SocketServer {
             } catch (EOFException e) {
                 // When client socket close()
                 // this exception will throw because the input stream is close with socket
+                clientHandlerHashMap.remove(this.getUid());
                 System.out.println("Client disconnect");
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
@@ -185,7 +186,13 @@ public class SocketServer {
                         return;
                     }
 
-                    clientHandler.response(AuthenticationResponse.builder().statusCode(StatusCode.OK).build());
+                    Optional<Boolean> isAdmin = userDao.isAdmin(username);
+                    if (isAdmin.isPresent()) {
+                        clientHandler.response(AuthenticationResponse.builder().role(0).statusCode(StatusCode.OK).build());
+                        return;
+                    }
+
+                    clientHandler.response(AuthenticationResponse.builder().role(1).statusCode(StatusCode.OK).build());
                     addClientHandlerMap(username, clientHandler);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -332,7 +339,7 @@ public class SocketServer {
                         return;
                     }
 
-                    clientHandler.response(UnfriendResponse.builder().statusCode(StatusCode.OK).build());
+                    clientHandler.response(UnfriendResponse.builder().user(user).friend(friend).statusCode(StatusCode.OK).build());
 
                     ClientHandler other = getClientHandlerMap(friend);
                     if (other != null) {
@@ -385,13 +392,17 @@ public class SocketServer {
                         clientHandler.response(AcceptRequestFriendResponse.builder().statusCode(StatusCode.BAD_REQUEST).build());
                         return;
                     }
-                    isSuccess = conservationDao.createConservation(user, new ArrayList<String>() {{
-                        add(friend);
-                    }}, false);
 
-                    if (isSuccess.isEmpty()) {
-                        clientHandler.response(AcceptRequestFriendResponse.builder().statusCode(StatusCode.BAD_REQUEST).build());
-                        return;
+                    Optional<Boolean> isExists = conservationDao.isConservationBefore(user, friend);
+                    if (isExists.isEmpty()) {
+                        isSuccess = conservationDao.createConservation(user, new ArrayList<String>() {{
+                            add(friend);
+                        }}, false);
+
+                        if (isSuccess.isEmpty()) {
+                            clientHandler.response(AcceptRequestFriendResponse.builder().statusCode(StatusCode.BAD_REQUEST).build());
+                            return;
+                        }
                     }
 
                     clientHandler.response(AcceptRequestFriendResponse.builder().statusCode(StatusCode.OK).build());
@@ -400,7 +411,10 @@ public class SocketServer {
                     if (other != null) {
                         other.response(AddFriendResponse.builder().user(user).friend(friend).statusCode(StatusCode.OK).build());
                     }
-
+                    other = getClientHandlerMap(friend);
+                    if (other != null) {
+                        other.response(AddFriendResponse.builder().user(user).friend(friend).statusCode(StatusCode.OK).build());
+                    }
                 } catch (IOException e) {
                     e.printStackTrace(System.err);
                 }
@@ -496,11 +510,11 @@ public class SocketServer {
 
                 try {
                     if (isSuccess.isEmpty()) {
-                        clientHandler.response(DeleteMessageResponse.builder().statusCode(StatusCode.BAD_REQUEST).build());
+                        clientHandler.response(DeleteMessageResponse.builder().statusCode(StatusCode.BAD_REQUEST).conservationID(conservationID).build());
                         return;
                     }
 
-                    clientHandler.response(DeleteMessageResponse.builder().statusCode(StatusCode.OK).build());
+                    clientHandler.response(DeleteMessageResponse.builder().statusCode(StatusCode.OK).conservationID(conservationID).build());
                 } catch (IOException e) {
                     e.printStackTrace(System.err);
                 }
@@ -516,7 +530,7 @@ public class SocketServer {
                 Collection<Message> messages = conservationDao.searchMessageInConservation(conservationID, text);
 
                 try {
-                    clientHandler.response(SearchMessageConservationResponse.builder().messages(messages).statusCode(StatusCode.OK).build());
+                    clientHandler.response(SearchMessageConservationResponse.builder().messages(messages).statusCode(StatusCode.OK).conservationID(conservationID).build());
                 } catch (IOException e) {
                     e.printStackTrace(System.err);
                 }

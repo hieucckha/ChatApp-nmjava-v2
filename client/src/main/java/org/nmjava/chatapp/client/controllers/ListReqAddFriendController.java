@@ -41,7 +41,8 @@ public class ListReqAddFriendController implements Initializable {
         ThreadRespone.reqlistContainer = reqlistContainer;
 
         sendRequestAddFriendBtn.setOnMouseClicked(e->{
-            Main.socketClient.addRequestToQueue(AddFriendRequest.builder().user(Main.UserName).friend(labelName.getText()).build());
+            if(!Main.UserName.equals(labelName.getText()))
+                Main.socketClient.addRequestToQueue(AddFriendRequest.builder().user(Main.UserName).friend(labelName.getText()).build());
         });
     }
 

@@ -2,6 +2,7 @@ package org.nmjava.chatapp.client.controllers;
 
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.DatePicker;
 import org.nmjava.chatapp.client.Main;
 import org.nmjava.chatapp.client.networks.ThreadRespone;
 import org.nmjava.chatapp.client.utils.SceneController;
@@ -20,11 +21,35 @@ import java.util.ResourceBundle;
 
 public class SignupController implements Initializable {
 
-    public TextField fdEmail;
-    public TextField fdPassword;
-    public TextField fdComfierPw;
-    public Button btnSignup;
-    public Button btnLogin;
+    @FXML
+    private TextField adresstf;
+
+    @FXML
+    private Button btnLogin;
+
+    @FXML
+    private Button btnSignup;
+
+    @FXML
+    private TextField fdComfierPw;
+
+    @FXML
+    private TextField fdEmail;
+
+    @FXML
+    private TextField fdPassword;
+
+    @FXML
+    private TextField fullnametf;
+
+    @FXML
+    private TextField gender;
+
+    @FXML
+    private TextField username;
+    @FXML
+    private DatePicker dobpicker;
+
 
     public static Stage stage;
     @FXML
@@ -40,7 +65,8 @@ public class SignupController implements Initializable {
 
     private void onSignupBtnClick(Stage stage) {
         if (fdPassword.getText().equals(fdComfierPw.getText())){
-            Main.socketClient.addRequestToQueue(CreateAccountRequest.builder().fullName(fdEmail.getText()).email("").address("").dateOfBirth(LocalDate.now()).gender("").username(fdEmail.getText()).password(fdPassword.getText()).build());
+            System.out.println(fdPassword.getText());
+            Main.socketClient.addRequestToQueue(CreateAccountRequest.builder().fullName(fullnametf.getText()).email(fdEmail.getText()).address(adresstf.getText()).dateOfBirth(dobpicker.getValue()).gender(gender.getText()).username(username.getText()).password(fdPassword.getText()).build());
         }
         else {
             Alert a = new Alert(Alert.AlertType.NONE);

@@ -31,6 +31,31 @@ public class UserDao {
         return RandomStringUtils.random(length, 0, possibleCharacters.length - 1, false, false, possibleCharacters, new SecureRandom());
     }
 
+    public Optional<Boolean> isAdmin(String username) {
+        String sql = "SELECT exists(select 1 from public.admin_user WHERE username = ?)";
+
+        return connection.flatMap(conn -> {
+            Optional<Boolean> isAdmin = Optional.empty();
+
+            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setString(1, username);
+
+                ResultSet resultSet = statement.executeQuery();
+
+                if (resultSet.next()) {
+                    if (resultSet.getBoolean(1))
+                        isAdmin = Optional.of(true);
+                }
+
+                resultSet.close();
+            } catch (SQLException sqlEx) {
+                sqlEx.printStackTrace(System.err);
+            }
+
+            return isAdmin;
+        });
+    }
+
     public Optional<Boolean> isAuthUser(String username, String plainPassword) {
         String getPassword = "SELECT password " +
                 "FROM public.users " +
@@ -73,6 +98,7 @@ public class UserDao {
 
     public Optional<String> resetPassword(String email) {
         String newPassword = generatedPassword(6);
+        String hashPassword = hashPassword(newPassword);
 
         String sql = "UPDATE public.users SET password = ? WHERE email = ?";
 
@@ -80,7 +106,7 @@ public class UserDao {
             Optional<String> rtnPassword = Optional.empty();
 
             try (PreparedStatement statement = conn.prepareStatement(sql)) {
-                statement.setString(1, newPassword);
+                statement.setString(1, hashPassword);
                 statement.setString(2, email);
 
                 int rowOfUpdate = statement.executeUpdate();

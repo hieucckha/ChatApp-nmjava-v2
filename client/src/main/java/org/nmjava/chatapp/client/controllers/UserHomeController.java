@@ -62,6 +62,16 @@ public class UserHomeController implements Initializable {
 
     @FXML
     private Button createGroupbtn;
+    @FXML
+    private TextField searchAll;
+    @FXML
+    private HBox settingConservation;
+    @FXML
+    private Button searchAllBtn;
+    @FXML
+    private Button searchBtn;
+    @FXML
+    private TextField search;
     public static UserTitleChat utc;
     public static String conservationID;
 
@@ -86,7 +96,7 @@ public class UserHomeController implements Initializable {
         });
         listReqAddFriend = new ArrayList<>();
         ThreadRespone UserHomeThrd = new ThreadRespone("UserHome");
-        this.titleChatContainer.getChildren().add(this.utc);
+        this.titleChatContainer.getChildren().add(0,this.utc);
 
         Button setting = new Button("Setting Conservation");
         setting.setOnMouseClicked(e->{
@@ -98,10 +108,7 @@ public class UserHomeController implements Initializable {
             newStage.setScene(SceneController.staticGetScene("SettingConservation"));
             newStage.show();
         });
-        HBox settingbox = new HBox(setting);
-        settingbox.setFillHeight(true);
-        settingbox.setAlignment(Pos.CENTER_RIGHT);
-        this.titleChatContainer.getChildren().add(settingbox);
+        settingConservation.getChildren().add(0,setting);
         spContainer.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         spContainer.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         ThreadRespone.spContainer = spContainer;
@@ -146,6 +153,13 @@ public class UserHomeController implements Initializable {
         });
         friendBtn.setOnMouseClicked(e -> {
             Main.socketClient.addRequestToQueue(GetListFriendRequest.builder().username(Main.UserName).build());
+        });
+        searchAllBtn.setOnMouseClicked(e -> {
+            Main.socketClient.addRequestToQueue(SearchMessageAllRequest.builder().text(searchAll.getText()).username(Main.UserName).build());
+        });
+        searchBtn.setOnMouseClicked(e -> {
+            if(!Objects.isNull(conservationID) &&!conservationID.isEmpty()&& !conservationID.isBlank())
+                Main.socketClient.addRequestToQueue(SearchMessageConservationRequest.builder().conservationID(conservationID).text(search.getText()).build());
         });
     }
 

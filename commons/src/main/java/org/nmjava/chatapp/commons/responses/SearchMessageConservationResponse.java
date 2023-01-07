@@ -12,10 +12,12 @@ import java.util.Collection;
 @Getter
 public class SearchMessageConservationResponse extends Response {
     private Collection<Message> messages;
+    private String conservationID;
 
     @Builder
-    public SearchMessageConservationResponse(@NonNull StatusCode statusCode, Collection<Message> messages) {
+    public SearchMessageConservationResponse(@NonNull StatusCode statusCode, Collection<Message> messages , @NonNull String conservationID) {
         super(ResponseType.SEARCH_MESSAGE_CONSERVATION, statusCode);
         this.messages = messages;
+        this.conservationID = conservationID;
     }
 }

@@ -45,6 +45,10 @@ public class ConservationDao {
         return conservations;
     }
 
+//    public Optional<Conservation> getInfoConservation(String conservationID) {
+//
+//    }
+
     public Collection<Message> getListMessageConservation(String conservationId, String username) {
         Collection<Message> messages = new ArrayList<>();
 
@@ -266,15 +270,37 @@ public class ConservationDao {
             return isSuccess;
         });
     }
+    public Optional<Boolean> isConservationBefore(String first, String second) {
+        String sql = "SELECT fn_isConservationBefore(?, ?)";
 
+        return connection.flatMap(conn -> {
+            Optional<Boolean> isExists = Optional.empty();
+
+            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setString(1, first);
+                statement.setString(2, second);
+
+                System.out.println(statement);
+
+                ResultSet resultSet = statement.executeQuery();
+
+                if (resultSet.next()) {
+                    if (resultSet.getBoolean(1))
+                        isExists = Optional.of(true);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace(System.err);
+            }
+
+            return isExists;
+        });
+    }
     public Collection<Message> searchMessageInConservation(String conservationID, String text) {
         Collection<Message> messages = new ArrayList<>();
 
         String sql = "SELECT message_id, sender_username, conservation_id, create_at, message FROM messages WHERE conservation_id = ? AND LOWER(message) LIKE ?";
 
         connection.ifPresent(conn -> {
-            Optional<Boolean> isSuccess = Optional.empty();
-
             try (PreparedStatement statement = conn.prepareStatement(sql)) {
                 statement.setString(1, conservationID);
                 statement.setString(2, "%" + text.toLowerCase() + "%");

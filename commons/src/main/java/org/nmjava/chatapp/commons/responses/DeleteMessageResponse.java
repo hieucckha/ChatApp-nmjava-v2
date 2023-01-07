@@ -8,8 +8,10 @@ import org.nmjava.chatapp.commons.enums.StatusCode;
 
 @Getter
 public class DeleteMessageResponse extends Response {
+    private String conservationID;
     @Builder
-    public DeleteMessageResponse(@NonNull StatusCode statusCode) {
+    public DeleteMessageResponse(@NonNull StatusCode statusCode,@NonNull String conservationID) {
         super(ResponseType.DELETE_MESSAGE, statusCode);
+        this.conservationID =conservationID;
     }
 }

@@ -3,11 +3,13 @@ package org.nmjava.chatapp.client.networks;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import org.nmjava.chatapp.client.Main;
 import org.nmjava.chatapp.client.components.*;
 import org.nmjava.chatapp.client.controllers.CreateGroupChatController;
@@ -17,10 +19,7 @@ import org.nmjava.chatapp.commons.enums.StatusCode;
 import org.nmjava.chatapp.commons.models.Conservation;
 import org.nmjava.chatapp.commons.models.Friend;
 import org.nmjava.chatapp.commons.models.Message;
-import org.nmjava.chatapp.commons.requests.GetListConservationRequest;
-import org.nmjava.chatapp.commons.requests.GetListMemberConservationRequest;
-import org.nmjava.chatapp.commons.requests.GetListMessageConservationRequest;
-import org.nmjava.chatapp.commons.requests.GetListRequestFriendRequest;
+import org.nmjava.chatapp.commons.requests.*;
 import org.nmjava.chatapp.commons.responses.*;
 
 import java.util.ArrayList;
@@ -35,8 +34,6 @@ public class ThreadRespone implements Runnable {
     public String currentName;
 
     public static ScrollPane reqlistContainer;
-
-
     public static ScrollPane spContainer;
 
     public static ScrollPane conservationContainer;
@@ -96,22 +93,50 @@ public class ThreadRespone implements Runnable {
                 System.out.println("Type: " + response.getType());
 
                 switch (response.getType()) {
+//                    case Get_Info_conservation ->{
+//                        AuthenticationResponse res = (AuthenticationResponse) response;
+//                        if (res.getStatusCode() == StatusCode.OK) {
+//                            if(res.conID.equals(UserHomeController.conservationID))
+//                            {
+//                                UserHomeController.utc.setUserName(res.getNameConserVation());
+//                            }
+//                        }
+//                    }
                     case AUTHENTICATION -> {
                         AuthenticationResponse res = (AuthenticationResponse) response;
                         if (res.getStatusCode() == StatusCode.OK) {
-                            Platform.runLater(new Runnable() {
-                                public void run() {
-                                    a.setAlertType(Alert.AlertType.CONFIRMATION);
-                                    a.setContentText("Dang nhap thanh cong");
-                                    // show the dialog
-                                    a.show();
+                            System.out.println(res.getRole());
+                            if(res.getRole()==1){
+                                Platform.runLater(new Runnable() {
+                                    public void run() {
+                                        a.setAlertType(Alert.AlertType.CONFIRMATION);
+                                        a.setContentText("Dang nhap thanh cong");
+                                        // show the dialog
+                                        a.show();
 
-                                    Main.stage.setScene(SceneController.staticGetScene("UserHome"));
-                                    Main.stage.setTitle("UserHome");
+                                        Main.stage.setScene(SceneController.staticGetScene("UserHome"));
+                                        Main.stage.setTitle("UserHome");
 
-                                    Main.stage.show();
-                                }
-                            });
+                                        Main.stage.show();
+                                    }
+                                });
+                            }
+                            else {
+                                Platform.runLater(new Runnable() {
+                                    public void run() {
+                                        a.setAlertType(Alert.AlertType.CONFIRMATION);
+                                        a.setContentText("Dang nhap thanh cong");
+                                        // show the dialog
+                                        a.show();
+
+                                        Main.stage.setScene(SceneController.staticGetScene("AdminHome"));
+                                        Main.stage.setTitle("AdminHome");
+
+                                        Main.stage.show();
+                                    }
+                                });
+                            }
+
                         } else if (res.getStatusCode() == StatusCode.NOT_FOUND) {
                             Platform.runLater(new Runnable() {
                                 public void run() {
@@ -145,10 +170,36 @@ public class ThreadRespone implements Runnable {
                                     a.setContentText("Tai Khoan da ton tai");
                                     // show the dialog
                                     a.show();
+                                    Main.stage.setScene(SceneController.staticGetScene("Login"));
+                                    Main.stage.show();
                                 }
                             });
 
                         }
+                        break;
+                    }
+                    case FORGOT_PASSWORD -> {
+                        if (response.getStatusCode() == StatusCode.OK) {
+                            Platform.runLater(new Runnable() {
+                                public void run() {
+                                    a.setAlertType(Alert.AlertType.CONFIRMATION);
+                                    a.setContentText("Reset Thanh Cong");
+                                    // show the dialog
+                                    a.show();
+                                }
+                            });
+                        }
+                        else{
+                            Platform.runLater(new Runnable() {
+                                public void run() {
+                                    a.setAlertType(Alert.AlertType.WARNING);
+                                    a.setContentText("Mail ko ton tai hoac da co loi xay ra luc khoi tao lai pw");
+                                    // show the dialog
+                                    a.show();
+                                }
+                            });
+                        }
+
                         break;
                     }
                     case GET_LIST_REQUEST_FRIEND -> {
@@ -177,7 +228,7 @@ public class ThreadRespone implements Runnable {
                         }
                         break;
                     }
-                    case ADD_FRIEND -> {
+                    case ADD_FRIEND,ACCEPT_REQUEST_FRIEND ,REJECT_REQUEST_FRIEND -> {
                         Main.socketClient.addRequestToQueue(GetListRequestFriendRequest.builder().username(Main.UserName).build());
                         Main.socketClient.addRequestToQueue(GetListConservationRequest.builder().username(Main.UserName).build());
 
@@ -284,6 +335,80 @@ public class ThreadRespone implements Runnable {
                         }
                         break;
                     }
+                    case SEARCH_MESSAGE_ALL -> {
+                        SearchMessageAllResponse res = (SearchMessageAllResponse) response;
+                        Collection<Message> messages = res.getMessages();
+                        if (!messages.isEmpty()) {
+                            VBox ContactMessageList = new ContactMessageList();
+                            for (Message msg : messages) {
+                                HBox timeLabel = new HBox();
+                                timeLabel.setAlignment(Pos.CENTER);
+                                timeLabel.getChildren().add(new Label(msg.getCreateAt().toString()));
+                                timeLabel.setFillHeight(true);
+                                ContactMessageList.getChildren().add(0,timeLabel);
+                                if (msg.getSender().equals(Main.UserName)) {
+                                    ContactMessageList.getChildren().add(0,new messageFind(msg, true));
+                                } else {
+                                    if (msg.getSender().equals("system")) {
+                                        HBox newLine = new HBox();
+                                        newLine.setAlignment(Pos.CENTER);
+                                        newLine.getChildren().add(new Label(msg.getMessage()));
+                                        newLine.setFillHeight(true);
+                                        ContactMessageList.getChildren().add(0,newLine);
+                                    }
+                                    else{
+                                        ContactMessageList.getChildren().add(0,new messageFind(msg, false));
+                                    }
+
+                                }
+                            }
+                            Platform.runLater(new Runnable() {
+                                public void run() {
+                                    spContainer.setContent(ContactMessageList);
+                                }
+                            });
+
+                        }
+                    }
+                    case SEARCH_MESSAGE_CONSERVATION -> {
+                        SearchMessageConservationResponse res = (SearchMessageConservationResponse) response;
+                        Collection<Message> messages = res.getMessages();
+                        String conservationID = res.getConservationID();
+                        System.out.println(conservationID);
+                        if (!conservationID.equals(UserHomeController.conservationID)) break;
+                        if (!messages.isEmpty()) {
+                            VBox ContactMessageList = new ContactMessageList();
+                            for (Message msg : messages) {
+                                HBox timeLabel = new HBox();
+                                timeLabel.setAlignment(Pos.CENTER);
+                                timeLabel.getChildren().add(new Label(msg.getCreateAt().toString()));
+                                timeLabel.setFillHeight(true);
+                                ContactMessageList.getChildren().add(0,timeLabel);
+                                if (msg.getSender().equals(Main.UserName)) {
+                                    ContactMessageList.getChildren().add(0,new conservationLine(msg, true));
+                                } else {
+                                    if (msg.getSender().equals("system")) {
+                                        HBox newLine = new HBox();
+                                        newLine.setAlignment(Pos.CENTER);
+                                        newLine.getChildren().add(new Label(msg.getMessage()));
+                                        newLine.setFillHeight(true);
+                                        ContactMessageList.getChildren().add(0,newLine);
+                                    }
+                                    else{
+                                        ContactMessageList.getChildren().add(0,new conservationLine(msg, false));
+                                    }
+
+                                }
+                            }
+                            Platform.runLater(new Runnable() {
+                                public void run() {
+
+                                    conservationContainer.setContent(ContactMessageList);
+                                }
+                            });
+
+                        }
+                    }
                     case GET_LIST_MESSAGE_CONSERVATION -> {
                         GetListMessageConservationResponse res = (GetListMessageConservationResponse) response;
                         Collection<Message> messages = res.getMessages();
@@ -319,6 +444,7 @@ public class ThreadRespone implements Runnable {
                             }
                             Platform.runLater(new Runnable() {
                                 public void run() {
+
                                     conservationContainer.setContent(ContactMessageList);
                                 }
                             });
@@ -327,6 +453,7 @@ public class ThreadRespone implements Runnable {
                             Platform.runLater(new Runnable() {
                                 public void run() {
                                     conservationContainer.setContent(new VBox());
+
                                 }
                             });
                         }
@@ -334,6 +461,12 @@ public class ThreadRespone implements Runnable {
                     }
                     case SEND_MESSAGE -> {
                         SentMessageResponse res = (SentMessageResponse) response;
+                        String conservationID = res.getConservationID();
+                        Main.socketClient.addRequestToQueue(GetListMessageConservationRequest.builder().username(Main.UserName).conservationID(conservationID).build());
+                        break;
+                    }
+                    case DELETE_MESSAGE -> {
+                        DeleteMessageResponse res = (DeleteMessageResponse) response;
                         String conservationID = res.getConservationID();
                         Main.socketClient.addRequestToQueue(GetListMessageConservationRequest.builder().username(Main.UserName).conservationID(conservationID).build());
                         break;
@@ -446,6 +579,10 @@ public class ThreadRespone implements Runnable {
                         });
                         break;
                     }
+                    case UNFRIEND -> {
+                        Main.socketClient.addRequestToQueue(GetListFriendRequest.builder().username(Main.UserName).build());
+                    }
+
                 }
 
             } while (response == null);
