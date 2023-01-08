@@ -100,20 +100,27 @@
                      <right>
                         <VBox prefHeight="354.0" prefWidth="236.0" style="-fx-background-color: #ddd5d5;" BorderPane.alignment="CENTER">
                            <children>
-                              <Label alignment="CENTER" prefHeight="10.0" prefWidth="190.0" text="List login">
+                              <Label alignment="CENTER" prefHeight="25.0" prefWidth="236.0" text="List login">
                                  <font>
                                     <Font size="16.0" />
                                  </font>
                               </Label>
-                              <TextArea fx:id="textAreaLoginTimes" disable="true" prefHeight="330.0" prefWidth="198.0" VBox.vgrow="ALWAYS" />
+                              <TextArea fx:id="textAreaLoginTimes" disable="true" prefHeight="83.0" prefWidth="236.0" VBox.vgrow="ALWAYS" />
+                              <Label alignment="CENTER" prefHeight="35.0" prefWidth="236.0" text="List Friend" textAlignment="CENTER">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Label>
+                              <TextArea fx:id="textAreaFriendList" disable="true" prefHeight="244.0" prefWidth="236.0" />
                            </children>
                         </VBox>
                      </right>
                      <center>
-                        <TableView fx:id="tableView" onMouseClicked="#onClickCollumn" prefHeight="354.0" prefWidth="502.0" BorderPane.alignment="CENTER">
+                        <TableView fx:id="tableView" onMouseClicked="#onClickItem" prefHeight="354.0" prefWidth="502.0" BorderPane.alignment="CENTER">
                           <columns>
                             <TableColumn fx:id="tableLoginUserName" editable="false" prefWidth="75.0" sortable="false" text="User name" />
                             <TableColumn fx:id="tableLoginName" editable="false" prefWidth="75.0" sortable="false" text="Name" />
+                              <TableColumn fx:id="tableCreateAt" prefWidth="75.0" text="Created at" />
                           </columns>
                         </TableView>
                      </center>

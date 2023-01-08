@@ -1,5 +1,6 @@
 package org.nmjava.chatapp.client.controllers;
 
+import org.nmjava.chatapp.client.Main;
 import org.nmjava.chatapp.client.utils.SceneController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -7,6 +8,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import org.nmjava.chatapp.commons.requests.ForgotPasswordRequest;
+import org.nmjava.chatapp.commons.requests.GetListConservationRequest;
 
 public class ForgotPwController {
     public TextField fdEmail;
@@ -25,8 +28,7 @@ public class ForgotPwController {
     }
 
     private void onResetPwBtnClick(Stage stage) {
-        stage.setScene(SceneController.staticGetScene("Login"));
-        stage.show();
+        Main.socketClient.addRequestToQueue(ForgotPasswordRequest.builder().email(fdEmail.getText()).build());
     }
 
     private void onCancelBtnClick(Stage stage) {

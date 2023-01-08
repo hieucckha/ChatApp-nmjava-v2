@@ -1,0 +1,9 @@
+#send {
+    -fx-background-radius: 25;
+    -fx-background-color: #d4f1d6;
+
+}
+#receive {
+    -fx-background-radius: 25;
+    -fx-background-color: red;
+}

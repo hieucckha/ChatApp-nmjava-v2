@@ -1,4 +1,4 @@
-package org.nmjava.chatapp.client.models;
+package org.nmjava.chatapp.commons.models;
 
 public class ContactModel {
     private String ImageSrc;

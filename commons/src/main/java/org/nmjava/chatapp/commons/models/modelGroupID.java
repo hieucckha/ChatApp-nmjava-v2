@@ -1,6 +1,4 @@
-package org.nmjava.chatapp.client.models;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
+package org.nmjava.chatapp.commons.models;
 
 public class modelGroupID {
     private int GroupID;

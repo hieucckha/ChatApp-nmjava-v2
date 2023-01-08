@@ -13,7 +13,7 @@
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.nmjava.chatapp.client.controllers.LoginController">
     <children>
         <TextField fx:id="fdEmail" maxHeight="50.0" maxWidth="250.0" minHeight="40.0" minWidth="200.0" prefHeight="50.0"
-                   prefWidth="250.0" text="Email">
+                   prefWidth="250.0" text="Username">
             <font>
                 <Font size="16.0"/>
             </font>

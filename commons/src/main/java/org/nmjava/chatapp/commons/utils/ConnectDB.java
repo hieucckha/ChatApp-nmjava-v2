@@ -1,4 +1,4 @@
-package org.nmjava.chatapp.client.utils;
+package org.nmjava.chatapp.commons.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
