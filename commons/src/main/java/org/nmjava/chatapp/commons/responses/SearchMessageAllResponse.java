@@ -10,14 +10,12 @@ import org.nmjava.chatapp.commons.models.Message;
 import java.util.Collection;
 
 @Getter
-public class GetListMessageConservationResponse extends Response {
+public class SearchMessageAllResponse extends Response {
     private Collection<Message> messages;
-    private String conservationID;
 
     @Builder
-    public GetListMessageConservationResponse(@NonNull StatusCode statusCode, @NonNull Collection<Message> messages,@NonNull String conservationID) {
-        super(ResponseType.GET_LIST_MESSAGE_CONSERVATION, statusCode);
+    public SearchMessageAllResponse(@NonNull StatusCode statusCode, Collection<Message> messages) {
+        super(ResponseType.SEARCH_MESSAGE_ALL, statusCode);
         this.messages = messages;
-        this.conservationID =conservationID;
     }
 }

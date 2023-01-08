@@ -89,10 +89,9 @@ public class FriendDao {
         connection.ifPresent(conn -> {
             try (PreparedStatement statement = conn.prepareStatement(sql)) {
                 statement.setString(1, username);
-
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
-                    String friendUsername = resultSet.getString("friend_username");
+                    String friendUsername = resultSet.getString("user_username");
 
                     friends.add(new Friend(friendUsername, false));
                 }
@@ -102,6 +101,27 @@ public class FriendDao {
         });
 
         return friends;
+    }
+
+    public Optional<Boolean> unfriend(String user, String friend) {
+        String sql = "DELETE FROM public.friends WHERE user_username = ? AND friend_username = ?";
+
+        return connection.flatMap(conn -> {
+            Optional<Boolean> isSuccess = Optional.empty();
+
+            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setString(1, user);
+                statement.setString(2, friend);
+
+                int numberRowDelete = statement.executeUpdate();
+
+                if (numberRowDelete > 0) isSuccess = Optional.of(true);
+            } catch (SQLException e) {
+                e.printStackTrace(System.err);
+            }
+
+            return isSuccess;
+        });
     }
 
     public Optional<Boolean> addFriend(String user, String friend) {
@@ -135,8 +155,29 @@ public class FriendDao {
             Optional<Boolean> isSuccess = Optional.empty();
 
             try (PreparedStatement statement = conn.prepareStatement(sql)) {
-                statement.setString(1, user);
-                statement.setString(2, friend);
+                statement.setString(1, friend);
+                statement.setString(2, user);
+
+                int numberOfRowUpdate = statement.executeUpdate();
+
+                if (numberOfRowUpdate > 0) isSuccess = Optional.of(true);
+            } catch (SQLException e) {
+                e.printStackTrace(System.err);
+            }
+
+            return isSuccess;
+        });
+    }
+
+    public Optional<Boolean> rejectFriend(String user, String friend) {
+        String sql = "DELETE FROM public.friends WHERE user_username = ? and friend_username = ?";
+
+        return connection.flatMap(conn -> {
+            Optional<Boolean> isSuccess = Optional.empty();
+
+            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setString(1, friend);
+                statement.setString(2, user);
 
                 int numberOfRowUpdate = statement.executeUpdate();
 

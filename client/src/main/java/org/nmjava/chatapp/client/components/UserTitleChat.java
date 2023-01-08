@@ -59,6 +59,9 @@ public class UserTitleChat extends HBox implements Initializable {
     public void setUserName(String userName) {
         this.userNameLb.setText(userName);
     }
+    public String getUserName() {
+        return this.userNameLb.getText();
+    }
 
     public void setLastOnlineHour(int lastOnlineHour) {
         String status = lastOnlineHour == IS_ONLINE ? "Online" : (lastOnlineHour + " hours ago");

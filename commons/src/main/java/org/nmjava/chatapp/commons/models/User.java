@@ -3,6 +3,7 @@ package org.nmjava.chatapp.commons.models;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -10,7 +11,7 @@ import  javafx.scene.control.Button;
 
 @Getter
 @Setter
-public class User {
+public class User implements Serializable {
     private UUID userID;
     private String username;
     private String password;
@@ -47,6 +48,7 @@ public class User {
 
     public User(String username, String password, String fullName, String address, LocalDate dateOfBirth, String gender, String email, boolean online, boolean activated, LocalDateTime createAt) {
         setUsername(username);
+        setPassword(password);
         setFullName(fullName);
         setAddress(address);
         setDateOfBirth(dateOfBirth);

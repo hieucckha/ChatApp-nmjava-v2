@@ -94,7 +94,7 @@ public class SocketClient {
             do {
                 try {
                     Object objet = in.readObject();
-                    if (ObjectUtils.isEmpty(objet))
+                    if (ObjectUtils.isNotEmpty(objet))
                         responseQueue.add((Response) objet);
                 } catch (IOException | ClassNotFoundException e) {
                     e.printStackTrace();

@@ -6,11 +6,12 @@ import lombok.NonNull;
 import org.nmjava.chatapp.commons.enums.RequestType;
 
 @Getter
-public class GetListFriendOnlineRequest extends Request {
+public class CheckUserExistRequest extends Request {
     private String username;
+
     @Builder
-    public GetListFriendOnlineRequest(@NonNull String username) {
-        super(RequestType.GET_LIST_FRIEND_ONLINE);
+    public CheckUserExistRequest(@NonNull String username) {
+        super(RequestType.CHECK_USER_EXIST);
         this.username = username;
     }
 }
