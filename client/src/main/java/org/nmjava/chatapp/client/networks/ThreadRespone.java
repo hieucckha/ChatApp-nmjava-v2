@@ -376,7 +376,9 @@ public class ThreadRespone implements Runnable {
                         String conservationID = res.getConservationID();
                         System.out.println(conservationID);
                         if (!conservationID.equals(UserHomeController.conservationID)) break;
+                        System.out.println("hi");
                         if (!messages.isEmpty()) {
+                            System.out.println("hi");
                             VBox ContactMessageList = new ContactMessageList();
                             for (Message msg : messages) {
                                 HBox timeLabel = new HBox();
