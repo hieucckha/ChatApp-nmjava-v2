@@ -37,7 +37,7 @@ public class SendMailService {
         msg.setFrom(new InternetAddress(SendMailService.FROM_EMAIL, "No Reply@nmjava"));
         msg.setReplyTo(InternetAddress.parse(SendMailService.FROM_EMAIL, false));
         msg.setSubject(subject, "UTF-8");
-        msg.setText(body, "UTF-8");
+        msg.setContent(body, "text/html;charset=UTF-8");
         msg.setSentDate(new Date());
         msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail, false));
 

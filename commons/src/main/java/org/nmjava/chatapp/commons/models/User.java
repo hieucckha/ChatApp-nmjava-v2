@@ -44,6 +44,7 @@ public class User implements Serializable {
 
     public User(String username, String password, String fullName, String address, LocalDate dateOfBirth, String gender, String email, boolean online, boolean activated, LocalDateTime createAt) {
         setUsername(username);
+        setPassword(password);
         setFullName(fullName);
         setAddress(address);
         setDateOfBirth(dateOfBirth);

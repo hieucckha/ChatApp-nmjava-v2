@@ -204,6 +204,7 @@ public class SocketServer {
 
                 String username = req.getUsername();
                 String password = req.getPassword();
+                System.out.println("Password owr creqteAccount server### " + password);
                 String fullName = req.getFullName();
                 String address = req.getAddress();
                 LocalDate dateOfBirth = req.getDateOfBirth();
@@ -239,7 +240,9 @@ public class SocketServer {
                         return;
                     }
 
-                    Boolean isSuccess = SendMailService.sendMail(email, "Reset pasword", "You new password is: " + newPassword);
+                    Optional<String> username = userDao.getUsernameByEmail(email);
+
+                    Boolean isSuccess = SendMailService.sendMail(email, "Reset pasword", "Your username is: <b>%s</b><br>Your new password: <b>%s</b>".formatted(username.get(), newPassword.get()));
 
                     if (!isSuccess) {
                         clientHandler.response(ForgotPasswordResponse.builder().statusCode(StatusCode.BAD_REQUEST).build());

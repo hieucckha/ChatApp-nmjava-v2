@@ -298,7 +298,7 @@ public class ConservationDao {
     public Collection<Message> searchMessageInConservation(String conservationID, String text) {
         Collection<Message> messages = new ArrayList<>();
 
-        String sql = "SELECT message_id, sender_username, conservation_id, create_at, message FROM messages WHERE conservation_id = ? AND LOWER(message) LIKE ?";
+        String sql = "SELECT message_id, sender_username, conservation_id, create_at, message FROM messages join message_hide mh on messages.message_id = mh.message_id WHERE conservation_id = ? AND LOWER(message) LIKE ?";
 
         connection.ifPresent(conn -> {
             try (PreparedStatement statement = conn.prepareStatement(sql)) {

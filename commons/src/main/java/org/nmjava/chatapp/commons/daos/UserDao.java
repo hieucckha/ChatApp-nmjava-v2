@@ -27,8 +27,32 @@ public class UserDao {
     }
 
     private String generatedPassword(int length) {
-        char[] possibleCharacters = ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~!@#$%^&*()-_=+[{]}|;:,<.>?").toCharArray();
+        char[] possibleCharacters = ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~!@#$%^&*()-_=+[{]}|;:,.?").toCharArray();
         return RandomStringUtils.random(length, 0, possibleCharacters.length - 1, false, false, possibleCharacters, new SecureRandom());
+    }
+
+    public Optional<Boolean> isUserExists(String username) {
+        String sql = "SELECT exists(SELECT 1 FROM public.users WHERE username = ?)";
+
+        return connection.flatMap(conn -> {
+            Optional<Boolean> isExists = Optional.empty();
+
+            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setString(1, username);
+
+                ResultSet resultSet = statement.executeQuery();
+                if (resultSet.next()) {
+                    if (resultSet.getBoolean(1))
+                        isExists = Optional.of(true);
+                }
+
+
+            } catch (SQLException sqlEx) {
+                sqlEx.printStackTrace(System.err);
+            }
+
+            return isExists;
+        });
     }
 
     public Optional<Boolean> isAdmin(String username) {
@@ -58,8 +82,8 @@ public class UserDao {
 
     public Optional<Boolean> isAuthUser(String username, String plainPassword) {
         String getPassword = "SELECT password " +
-                "FROM public.users " +
-                "WHERE username = ?";
+                             "FROM public.users " +
+                             "WHERE username = ? AND is_activated = true";
 
         String logUserLogin = "INSERT INTO public.login_logs (username, login_at) VALUES (?, now())";
 
@@ -96,8 +120,32 @@ public class UserDao {
         });
     }
 
+    public Optional<String> getUsernameByEmail(String email) {
+        String sql = "SELECT username from public.users WHERE email = ?";
+
+        return connection.flatMap(conn -> {
+            Optional<String> username = Optional.empty();
+
+            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setString(1, email);
+
+                ResultSet resultSet = statement.executeQuery();
+                if (resultSet.next()) {
+                    username = Optional.of(resultSet.getString(1));
+                }
+
+
+            } catch (SQLException sqlEx) {
+                sqlEx.printStackTrace(System.err);
+            }
+
+            return username;
+        });
+    }
+
     public Optional<String> resetPassword(String email) {
         String newPassword = generatedPassword(6);
+        System.out.println("NewPassword ###" + newPassword);
         String hashPassword = hashPassword(newPassword);
 
         String sql = "UPDATE public.users SET password = ? WHERE email = ?";
@@ -123,34 +171,10 @@ public class UserDao {
         });
     }
 
-    public Optional<Boolean> isUserExists(String username) {
-        String sql = "SELECT exists(SELECT 1 FROM public.users WHERE username = ?)";
-
-        return connection.flatMap(conn -> {
-            Optional<Boolean> isExists = Optional.empty();
-
-            try (PreparedStatement statement = conn.prepareStatement(sql)) {
-                statement.setString(1, username);
-
-                ResultSet resultSet = statement.executeQuery();
-                if (resultSet.next()) {
-                    if (resultSet.getBoolean(1))
-                        isExists = Optional.of(true);
-                }
-
-
-            } catch (SQLException sqlEx) {
-                sqlEx.printStackTrace(System.err);
-            }
-
-            return isExists;
-        });
-    }
-
     public Collection<User> getInfoAll() {
         Collection<User> users = new ArrayList<>();
         String sql = "SELECT username, full_name, address, date_of_birth, gender, email, is_online, is_activated " +
-                "FROM public.users";
+                     "FROM public.users";
 
         connection.ifPresent(conn -> {
             try (Statement statement = conn.createStatement(); ResultSet resultSet = statement.executeQuery(sql)) {
@@ -181,12 +205,12 @@ public class UserDao {
         User nonNullUser = Objects.requireNonNull(user, "The user is null");
 
         String sql = "INSERT INTO public.users (username, password, full_name, address, date_of_birth, gender, email, is_online, is_activated, create_at) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
-                "RETURNING username";
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+                     "RETURNING username";
 
         return connection.flatMap(conn -> {
             Optional<String> id = Optional.empty();
-
+            System.out.println("Password Create new Account###" + nonNullUser.getPassword());
             try (PreparedStatement statement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 statement.setString(1, nonNullUser.getUsername());
                 statement.setString(2, this.hashPassword(nonNullUser.getPassword()));
@@ -242,8 +266,8 @@ public class UserDao {
 
     public void update(User user) {
         String sql = "UPDATE public.users " +
-                "SET full_name = ?, address = ?, date_of_birth = ?, gender = ?, email = ?, is_online = ?, is_activated = ? " +
-                "WHERE username = ?";
+                     "SET full_name = ?, address = ?, date_of_birth = ?, gender = ?, email = ?, is_online = ?, is_activated = ? " +
+                     "WHERE username = ?";
 
         connection.ifPresent(conn -> {
             try (PreparedStatement statement = conn.prepareStatement(sql)) {
